@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import stanissay.wear.pass.utils.BrowserMode
 import stanissay.wear.pass.utils.BrowserUiState
 import java.io.File
 
@@ -24,26 +25,52 @@ class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
     val canGoUp get() = _state.value.dir != root
 
     fun refresh() {
-        val s = _state.value
         val access = Environment.isExternalStorageManager()
+        val dir = _state.value.dir
         val list = if (access) {
-            s.dir.listFiles().orEmpty()
-                .filter { it.isDirectory || it.extension.equals("kdbx", true) }
+            dir.listFiles().orEmpty()
+                .filter { it.isDirectory || it.extension.equals("kdbx", ignoreCase = true) }
                 .sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
         } else emptyList()
-        _state.update { it.copy(items = list, hasAccess = access) }
+
+        _state.update {
+            it.copy(
+                items = list,
+                mode = when {
+                    !access -> BrowserMode.NoAccess
+                    it.mode == BrowserMode.NoAccess -> BrowserMode.Idle
+                    else -> it.mode
+                }
+            )
+        }
     }
 
-    fun open(dir: File) { _state.update { it.copy(dir = dir, error = null) }; refresh() }
+    fun open(dir: File) {
+        if (_state.value.mode == BrowserMode.Importing) return
+        _state.update {
+            it.copy(
+                dir = dir,
+                mode = if (it.mode is BrowserMode.Failed) BrowserMode.Idle else it.mode
+            )
+        }
+        refresh()
+    }
 
     fun up() { _state.value.dir.parentFile?.let { open(it) } }
 
     fun import(file: File, onDone: () -> Unit) {
-        _state.update { it.copy(busy = true, error = null) }
+        _state.update { it.copy(mode = BrowserMode.Importing) }
         viewModelScope.launch(Dispatchers.IO) {
-            val r = vault.importFrom(file)
-            _state.update { it.copy(busy = false, error = r.exceptionOrNull()?.message) }
-            if (r.isSuccess) withContext(Dispatchers.Main) { onDone() }
+            val result = vault.importFrom(file)
+            _state.update {
+                it.copy(
+                    mode = result.fold(
+                        onSuccess = { BrowserMode.Idle },
+                        onFailure = { e -> BrowserMode.Failed(e.message ?: "Помилка імпорту") }
+                    )
+                )
+            }
+            if (result.isSuccess) withContext(Dispatchers.Main) { onDone() }
         }
     }
 

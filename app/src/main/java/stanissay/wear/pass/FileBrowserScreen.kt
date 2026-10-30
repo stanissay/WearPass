@@ -1,7 +1,6 @@
 package stanissay.wear.pass
 
 import android.os.Environment
-import android.text.format.Formatter
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,45 +18,46 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material3.Button
-import androidx.wear.compose.material3.ButtonDefaults
-import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
+import stanissay.wear.pass.utils.BrowserMode
+import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.MainConstants
 import stanissay.wear.pass.utils.MainText
 
 @Composable
-fun FileBrowserScreen(
-    onImported: () -> Unit,
-    vm: FileBrowserViewModel = viewModel(),
-) {
+fun FileBrowserScreen(onImported: () -> Unit) {
+    val viewModel: FileBrowserViewModel = viewModel()
     val clipboard = LocalClipboard.current
-    val ui by vm.state.collectAsState()
-    val pkg = LocalContext.current.packageName
-    val title = if (ui.dir.absolutePath == Environment.getExternalStorageDirectory().absolutePath) "/" else ui.dir.name
-    val adbCommand = "adb shell appops set $pkg MANAGE_EXTERNAL_STORAGE allow"
+    val packageName = LocalContext.current.packageName
+    val state by viewModel.state.collectAsState()
+    val title = if (state.dir.absolutePath == Environment.getExternalStorageDirectory().absolutePath) "/" else state.dir.name
+    val adbCommand = "adb shell appops set $packageName MANAGE_EXTERNAL_STORAGE allow"
 
-    BackHandler(enabled = vm.canGoUp) { vm.up() }
+    BackHandler(enabled = viewModel.canGoUp) { viewModel.up() }
 
     ScalingLazyColumn(modifier = Modifier.fillMaxSize()) {
         item { ListHeader { MainText(title) } }
 
-        if (!ui.hasAccess) {
-            item {
+        when (val mode = state.mode) {
+            BrowserMode.NoAccess -> item {
                 ClickableBox(
-                    onLongClick = { vm.copyText(clipboard, adbCommand) }
+                    onLongClick = { viewModel.copyText(clipboard, adbCommand) }
                 ) { MainText("Немає доступу до файлів. Виконай:\n$adbCommand") }
             }
+            BrowserMode.Importing -> item { CircularBar() }
+            is BrowserMode.Failed -> item { MainText(mode.message) }
+            BrowserMode.Idle -> Unit
         }
 
-        if (vm.canGoUp) {
-            item { Button(onClick = vm::up, modifier = Modifier.fillMaxWidth(), label = { MainText("..") }) }
+        if (viewModel.canGoUp) {
+            item { Button(onClick = viewModel::up, modifier = Modifier.fillMaxWidth(), label = { MainText("..") }) }
         }
 
-        items(ui.items, key = { it.absolutePath }) { f ->
+        items(state.items, key = { it.absolutePath }) { f ->
             Button(
-                onClick = { if (f.isDirectory) vm.open(f) else vm.import(f, onImported) },
-                enabled = !ui.busy,
+                onClick = { if (f.isDirectory) viewModel.open(f) else viewModel.import(f, onImported) },
+                enabled = state.mode != BrowserMode.Importing,
                 modifier = Modifier.fillMaxWidth(),
                 label = { MainText(f.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 icon = {
@@ -71,7 +71,5 @@ fun FileBrowserScreen(
                 }
             )
         }
-
-        ui.error?.let { item { MainText(it) } }
     }
 }
