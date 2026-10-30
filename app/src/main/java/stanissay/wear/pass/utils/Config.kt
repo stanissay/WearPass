@@ -8,7 +8,6 @@ data class BrowserUiState(
     val dir: File,
     val items: List<File> = emptyList(),
     val hasAccess: Boolean = true,
-    val showAll: Boolean = false,
     val busy: Boolean = false,
     val error: String? = null,
 )

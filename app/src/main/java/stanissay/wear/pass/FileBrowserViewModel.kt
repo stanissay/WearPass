@@ -1,7 +1,10 @@
 package stanissay.wear.pass
 
 import android.app.Application
+import android.content.ClipData
 import android.os.Environment
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.Clipboard
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -16,20 +19,16 @@ import java.io.File
 class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
     private val vault = (app as App).vault
     private val root: File = Environment.getExternalStorageDirectory()
-
     private val _state = MutableStateFlow(BrowserUiState(dir = root))
     val state = _state.asStateFlow()
-
     val canGoUp get() = _state.value.dir != root
-
-    init { refresh() }
 
     fun refresh() {
         val s = _state.value
         val access = Environment.isExternalStorageManager()
         val list = if (access) {
             s.dir.listFiles().orEmpty()
-                .filter { it.isDirectory || s.showAll || it.extension.equals("kdbx", true) }
+                .filter { it.isDirectory || it.extension.equals("kdbx", true) }
                 .sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
         } else emptyList()
         _state.update { it.copy(items = list, hasAccess = access) }
@@ -39,8 +38,6 @@ class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
 
     fun up() { _state.value.dir.parentFile?.let { open(it) } }
 
-    fun toggleShowAll() { _state.update { it.copy(showAll = !it.showAll) }; refresh() }
-
     fun import(file: File, onDone: () -> Unit) {
         _state.update { it.copy(busy = true, error = null) }
         viewModelScope.launch(Dispatchers.IO) {
@@ -49,4 +46,12 @@ class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
             if (r.isSuccess) withContext(Dispatchers.Main) { onDone() }
         }
     }
+
+    fun copyText(clipboard: Clipboard, text: String) {
+        viewModelScope.launch(Dispatchers.Main) {
+            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("", text)))
+        }
+    }
+
+    init { refresh() }
 }
