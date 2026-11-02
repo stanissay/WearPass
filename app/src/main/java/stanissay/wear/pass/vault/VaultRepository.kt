@@ -1,4 +1,4 @@
-package stanissay.wear.pass
+package stanissay.wear.pass.vault
 
 import android.content.Context
 import app.keemobile.kotpass.cryptography.EncryptedValue
@@ -7,20 +7,21 @@ import app.keemobile.kotpass.database.KeePassDatabase
 import app.keemobile.kotpass.database.decode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.DataConstants
-import stanissay.wear.pass.utils.VaultStatus
 import java.io.File
 
 class VaultRepository(private val context: Context) {
     private val dir get() = File(context.filesDir, "vault").apply { mkdirs() }
     val dbFile get() = File(dir, "db.kdbx")
-    private val pinBlob get() = File(dir, "pin.blob")
     private val _status = MutableStateFlow(compute())
     val status = _status.asStateFlow()
+    val pinBlobFile get() = File(dir, "pin.blob")
+    val pinMetaFile get() = File(dir, "pin.meta")
 
     private fun compute() = when {
         !dbFile.exists() -> VaultStatus.NotImported
-        !pinBlob.exists() -> VaultStatus.NeedsMasterPassword
+        !pinBlobFile.exists() -> VaultStatus.NeedsMasterPassword
         else -> VaultStatus.PinLocked
     }
 
@@ -34,7 +35,8 @@ class VaultRepository(private val context: Context) {
             source.inputStream().use { i -> tmp.outputStream().use { o -> i.copyTo(o) } }
             check(hasKdbxSignature(tmp)) { context.getString(R.string.incorrect_file) }
             check(tmp.renameTo(dbFile)) { context.getString(R.string.error) }
-            pinBlob.delete()
+            pinBlobFile.delete()
+            pinMetaFile.delete()
         } finally {
             tmp.delete()
         }

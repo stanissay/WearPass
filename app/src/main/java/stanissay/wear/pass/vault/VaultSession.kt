@@ -1,4 +1,4 @@
-package stanissay.wear.pass
+package stanissay.wear.pass.vault
 
 import app.keemobile.kotpass.database.KeePassDatabase
 

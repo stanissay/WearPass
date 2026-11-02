@@ -15,6 +15,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.io.File
+import java.nio.ByteBuffer
+import java.nio.CharBuffer
 
 sealed class UiEvent {
     data class ShowToast(val message: String) : UiEvent()
@@ -53,3 +56,21 @@ fun TransformingLazyColumnItemScope.transformedItem(
                 applyContainerTransformation(scrollProgress)
             }
         }
+
+fun CharArray.toUtf8(): ByteArray {
+    val bb = Charsets.UTF_8.encode(CharBuffer.wrap(this))
+    val out = ByteArray(bb.remaining()).also { bb.get(it) }
+    bb.array().fill(0)
+    return out
+}
+
+fun ByteArray.toChars(): CharArray {
+    val cb = Charsets.UTF_8.decode(ByteBuffer.wrap(this))
+    return CharArray(cb.remaining()).also { cb.get(it) }
+}
+
+fun writeAtomic(target: File, bytes: ByteArray) {
+    val tmp = File(target.parentFile, target.name + ".tmp")
+    tmp.writeBytes(bytes)
+    check(tmp.renameTo(target)) { "Не вдалося записати ${target.name}" }
+}

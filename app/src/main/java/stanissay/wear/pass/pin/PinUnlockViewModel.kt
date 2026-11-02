@@ -11,10 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
-import stanissay.wear.pass.PinResult
 import stanissay.wear.pass.R
-import stanissay.wear.pass.utils.PinUnlockState
-
 
 class PinUnlockViewModel(app: Application) : AndroidViewModel(app) {
     private val vault = (app as App).vault

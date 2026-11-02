@@ -22,7 +22,8 @@ import stanissay.wear.pass.utils.MasterPasswordKey
 import stanissay.wear.pass.utils.PinSetupKey
 import stanissay.wear.pass.utils.PinUnlockKey
 import stanissay.wear.pass.utils.SettingsKey
-import stanissay.wear.pass.utils.VaultStatus
+import stanissay.wear.pass.vault.VaultRepository
+import stanissay.wear.pass.vault.VaultStatus
 
 @Composable
 fun AppNav(vault: VaultRepository) {

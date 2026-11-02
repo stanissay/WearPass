@@ -21,7 +21,6 @@ import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ListHeader
 import stanissay.wear.pass.R
-import stanissay.wear.pass.utils.BrowserMode
 import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants

@@ -16,8 +16,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
-import stanissay.wear.pass.utils.BrowserMode
-import stanissay.wear.pass.utils.BrowserUiState
 import stanissay.wear.pass.utils.DataConstants
 import java.io.File
 

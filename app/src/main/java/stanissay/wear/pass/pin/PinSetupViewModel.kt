@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
-import stanissay.wear.pass.utils.PinSetupState
 
 class PinSetupViewModel(app: Application) : AndroidViewModel(app) {
     private val vault = (app as App).vault
@@ -43,7 +42,7 @@ class PinSetupViewModel(app: Application) : AndroidViewModel(app) {
             val result = runCatching {
                 pinVault.setup(pin, requireNotNull(password) { application.getString(R.string.session_expired) })
             }
-            password?.fill('\u0000')
+            password?.fill('\u0000'); pin.fill('\u0000')
             first?.fill('\u0000'); first = null
             result.fold(
                 onSuccess = {
