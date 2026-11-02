@@ -9,4 +9,5 @@ object DataConstants {
     )
     const val BROWSER_UP = ".."
     const val PIN_LENGTH = 4
+    const val SAFE_LENGTH = 6
 }

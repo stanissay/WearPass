@@ -26,6 +26,7 @@ import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.UiConstants
 import stanissay.wear.pass.utils.MainText
+import stanissay.wear.pass.utils.PageTitle
 
 @Composable
 fun FileBrowserScreen(onImported: () -> Unit) {
@@ -39,7 +40,7 @@ fun FileBrowserScreen(onImported: () -> Unit) {
     BackHandler(enabled = viewModel.canGoUp) { viewModel.up() }
 
     ScalingLazyColumn(modifier = Modifier.fillMaxSize()) {
-        item { ListHeader { MainText(title) } }
+        item { ListHeader { PageTitle(title) } }
 
         when (val mode = state.mode) {
             BrowserMode.NoAccess -> item {
