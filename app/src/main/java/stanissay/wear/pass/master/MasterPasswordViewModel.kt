@@ -1,13 +1,16 @@
-package stanissay.wear.pass
+package stanissay.wear.pass.master
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import stanissay.wear.pass.App
+import stanissay.wear.pass.R
 
 sealed interface UnlockState {
     data object Idle : UnlockState
@@ -18,7 +21,6 @@ sealed interface UnlockState {
 class MasterPasswordViewModel(app: Application) : AndroidViewModel(app) {
     private val vault = (app as App).vault
     private val session = (app as App).session
-
     private val _state = MutableStateFlow<UnlockState>(UnlockState.Idle)
     val state = _state.asStateFlow()
 
@@ -34,7 +36,7 @@ class MasterPasswordViewModel(app: Application) : AndroidViewModel(app) {
                 },
                 onFailure = { e ->
                     _state.value = UnlockState.Error(
-                        e.message ?: e::class.simpleName ?: "Не вдалося відкрити базу"
+                        e.message ?: e::class.simpleName ?: application.getString(R.string.error)
                     )
                 },
             )

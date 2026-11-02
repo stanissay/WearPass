@@ -1,25 +1,9 @@
 package stanissay.wear.pass
 
 sealed interface PinResult {
-    data class Success(val password: CharArray) : PinResult {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as Success
-
-            if (!password.contentEquals(other.password)) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return password.contentHashCode()
-        }
-    }
-
+    class Success(val password: CharArray) : PinResult
     data class Wrong(val attemptsLeft: Int) : PinResult
-    data object TooMany : PinResult // блок уже стерто
+    data object TooMany : PinResult
 }
 
 interface PinVault {

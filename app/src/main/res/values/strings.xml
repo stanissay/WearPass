@@ -1,5 +1,14 @@
 <resources>
     <string name="app_name" translatable="false">WearPass</string>
     <string name="no_access">No access to files. Run:</string>
-    <string name="import_error">Import error</string>
+    <string name="incorrect_file">Incorrect file</string>
+    <string name="error">Error</string>
+    <string name="master_password">Master password</string>
+    <string name="open">Open</string>
+    <string name="pin" translatable="false">PIN</string>
+    <string name="create_pin">Create PIN</string>
+    <string name="confirm_pin">Confirm PIN</string>
+    <string name="incorrect_pin">Incorrect PIN</string>
+    <string name="attempts">Incorrect PIN. Attempts:</string>
+    <string name="session_expired">Session expired</string>
 </resources>

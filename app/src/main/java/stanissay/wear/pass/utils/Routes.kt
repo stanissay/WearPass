@@ -1,4 +1,4 @@
-package stanissay.wear.pass
+package stanissay.wear.pass.utils
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable

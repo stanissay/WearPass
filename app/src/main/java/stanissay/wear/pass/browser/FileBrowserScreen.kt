@@ -1,4 +1,4 @@
-package stanissay.wear.pass
+package stanissay.wear.pass.browser
 
 import android.os.Environment
 import androidx.activity.compose.BackHandler
@@ -20,11 +20,12 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ListHeader
+import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.BrowserMode
 import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.ClickableBox
-import stanissay.wear.pass.utils.DataKeys
-import stanissay.wear.pass.utils.MainConstants
+import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.UiConstants
 import stanissay.wear.pass.utils.MainText
 
 @Composable
@@ -53,7 +54,7 @@ fun FileBrowserScreen(onImported: () -> Unit) {
         }
 
         if (viewModel.canGoUp)
-            item { Button(onClick = viewModel::up, modifier = Modifier.fillMaxWidth(), label = { MainText(DataKeys.BROWSER_UP) }) }
+            item { Button(onClick = viewModel::up, modifier = Modifier.fillMaxWidth(), label = { MainText(DataConstants.BROWSER_UP) }) }
 
         items(state.items, key = { it.absolutePath }) { f ->
             Button(
@@ -66,7 +67,7 @@ fun FileBrowserScreen(onImported: () -> Unit) {
                         Image(
                             painter = painterResource(R.drawable.folder_ic),
                             contentDescription = "directory",
-                            modifier = Modifier.size(MainConstants.BUTTON_SIZE_S)
+                            modifier = Modifier.size(UiConstants.BUTTON_SIZE_S)
                         )
                     }
                 }

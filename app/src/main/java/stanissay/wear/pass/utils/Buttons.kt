@@ -22,7 +22,7 @@ fun BaseButton(
     painter: Painter,
     description: String,
     modifier: Modifier = Modifier,
-    size: Dp = MainConstants.BUTTON_SIZE,
+    size: Dp = UiConstants.BUTTON_SIZE,
     tint: Color = MaterialTheme.colorScheme.primary,
     onClick: () -> Unit = {},
     onLongClick: (() -> Unit)? = null,

@@ -1,4 +1,4 @@
-package stanissay.wear.pass
+package stanissay.wear.pass.browser
 
 import android.app.Application
 import android.content.ClipData
@@ -14,9 +14,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import stanissay.wear.pass.App
+import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.BrowserMode
 import stanissay.wear.pass.utils.BrowserUiState
-import stanissay.wear.pass.utils.DataKeys
+import stanissay.wear.pass.utils.DataConstants
 import java.io.File
 
 class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
@@ -31,7 +33,7 @@ class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
         val dir = _state.value.dir
         val list = if (access) {
             dir.listFiles().orEmpty()
-                .filter { it.isDirectory || it.extension.equals(DataKeys.KDBX, ignoreCase = true) }
+                .filter { it.isDirectory || it.extension.equals(DataConstants.KDBX, ignoreCase = true) }
                 .sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
         } else emptyList()
 
@@ -69,9 +71,7 @@ class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
                     mode = result.fold(
                         onSuccess = { BrowserMode.Idle },
                         onFailure = { e ->
-                            BrowserMode.Failed(e.message
-                                ?: application.getString(R.string.import_error)
-                            )
+                            BrowserMode.Failed(e.message ?: application.getString(R.string.error))
                         }
                     )
                 )

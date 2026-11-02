@@ -1,13 +1,10 @@
 package stanissay.wear.pass.utils
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope
 import androidx.wear.compose.material3.lazy.TransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
@@ -18,7 +15,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import stanissay.wear.pass.FileBrowserViewModel
 
 sealed class UiEvent {
     data class ShowToast(val message: String) : UiEvent()

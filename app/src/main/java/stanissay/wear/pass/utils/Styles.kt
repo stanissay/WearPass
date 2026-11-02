@@ -66,8 +66,9 @@ val ShapesStyle = Shapes(
     extraLarge = RoundedCornerShape(32.dp)
 )
 
-object MainConstants {
+object UiConstants {
     val BASE_SIZE = 36.dp
+    val BASE_SIZE_XXS = 8.dp
 
     val BUTTON_SIZE_S = 16.dp
     val BUTTON_SIZE = 32.dp
@@ -75,12 +76,10 @@ object MainConstants {
 
     val NULL_PADDING = 0.dp
     val MAIN_PADDING = 8.dp
+    val SPACE = 4.dp
 
     val THICKNESS = 1.dp
     val ELEVATION = 8.dp
-    val SPACE = 4.dp
-
-    const val PIN_LENGTH = 4
 }
 
 object PaddingStyle {

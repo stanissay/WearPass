@@ -10,7 +10,18 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.wear.compose.navigation3.rememberSwipeDismissableSceneStrategy
+import stanissay.wear.pass.browser.FileBrowserScreen
+import stanissay.wear.pass.master.MasterPasswordScreen
+import stanissay.wear.pass.pin.PinSetupScreen
+import stanissay.wear.pass.pin.PinUnlockScreen
+import stanissay.wear.pass.utils.EntryKey
+import stanissay.wear.pass.utils.FileBrowserKey
+import stanissay.wear.pass.utils.GroupKey
 import stanissay.wear.pass.utils.MainText
+import stanissay.wear.pass.utils.MasterPasswordKey
+import stanissay.wear.pass.utils.PinSetupKey
+import stanissay.wear.pass.utils.PinUnlockKey
+import stanissay.wear.pass.utils.SettingsKey
 import stanissay.wear.pass.utils.VaultStatus
 
 @Composable

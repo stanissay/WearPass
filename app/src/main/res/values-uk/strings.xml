@@ -1,4 +1,12 @@
 <resources>
     <string name="no_access">Немає доступу до файлів. Виконай:</string>
-    <string name="import_error">Помилка імпорту</string>
+    <string name="incorrect_file">Некоректний файл</string>
+    <string name="error">Помилка</string>
+    <string name="master_password">Майстер-пароль</string>
+    <string name="open">Відкрити</string>
+    <string name="create_pin">Створіть PIN</string>
+    <string name="confirm_pin">Підтвердіть PIN</string>
+    <string name="incorrect_pin">Невірний PIN</string>
+    <string name="attempts">Невірний PIN. Спроб:</string>
+    <string name="session_expired">Сесію завершено</string>
 </resources>

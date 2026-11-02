@@ -1,7 +1,8 @@
-package stanissay.wear.pass
+package stanissay.wear.pass.pin
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,19 +10,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-data class PinSetupState(
-    val confirming: Boolean = false,
-    val saving: Boolean = false,
-    val error: String? = null,
-    val resetKey: Int = 0,
-)
+import stanissay.wear.pass.App
+import stanissay.wear.pass.R
+import stanissay.wear.pass.utils.PinSetupState
 
 class PinSetupViewModel(app: Application) : AndroidViewModel(app) {
     private val vault = (app as App).vault
     private val session = (app as App).session
     private val pinVault = (app as App).pinVault
-
     private val _state = MutableStateFlow(PinSetupState())
     val state = _state.asStateFlow()
     private var first: CharArray? = null
@@ -37,7 +33,7 @@ class PinSetupViewModel(app: Application) : AndroidViewModel(app) {
         }
         if (!pin.contentEquals(first)) {
             first = null
-            _state.update { PinSetupState(error = "PIN не збігаються", resetKey = it.resetKey + 1) }
+            _state.update { PinSetupState(error = application.getString(R.string.incorrect_pin), resetKey = it.resetKey + 1) }
             return
         }
 
@@ -45,7 +41,7 @@ class PinSetupViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch(Dispatchers.Default) {
             val password = session.consumePassword()
             val result = runCatching {
-                pinVault.setup(pin, requireNotNull(password) { "Сесія втрачена, введи пароль знову" })
+                pinVault.setup(pin, requireNotNull(password) { application.getString(R.string.session_expired) })
             }
             password?.fill('\u0000')
             first?.fill('\u0000'); first = null
@@ -56,9 +52,9 @@ class PinSetupViewModel(app: Application) : AndroidViewModel(app) {
                 },
                 onFailure = { e ->
                     _state.update {
-                        PinSetupState(error = e.message ?: "Не вдалося зберегти PIN", resetKey = it.resetKey + 1)
+                        PinSetupState(error = e.message ?: application.getString(R.string.error), resetKey = it.resetKey + 1)
                     }
-                },
+                }
             )
         }
     }

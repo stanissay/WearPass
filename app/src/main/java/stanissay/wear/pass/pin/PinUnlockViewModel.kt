@@ -1,7 +1,8 @@
-package stanissay.wear.pass
+package stanissay.wear.pass.pin
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -9,18 +10,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import stanissay.wear.pass.App
+import stanissay.wear.pass.PinResult
+import stanissay.wear.pass.R
+import stanissay.wear.pass.utils.PinUnlockState
 
-data class PinUnlockState(
-    val busy: Boolean = false,
-    val error: String? = null,
-    val resetKey: Int = 0,
-)
 
 class PinUnlockViewModel(app: Application) : AndroidViewModel(app) {
     private val vault = (app as App).vault
     private val session = (app as App).session
     private val pinVault = (app as App).pinVault
-
     private val _state = MutableStateFlow(PinUnlockState())
     val state = _state.asStateFlow()
 
@@ -42,17 +41,17 @@ class PinUnlockViewModel(app: Application) : AndroidViewModel(app) {
                                     _state.update { it.copy(busy = false) }
                                     withContext(Dispatchers.Main) { onUnlocked() }
                                 },
-                                onFailure = { e -> fail(e.message ?: "Не вдалося відкрити базу") },
+                                onFailure = { e -> fail(e.message ?: application.getString(R.string.error)) },
                             )
                         }
-                        is PinResult.Wrong -> fail("Невірний PIN. Спроб: ${r.attemptsLeft}")
+                        is PinResult.Wrong -> fail("${application.getString(R.string.attempts)} ${r.attemptsLeft}")
                         PinResult.TooMany -> {
-                            vault.refresh() // блок стерто, статус стає NeedsMasterPassword
+                            vault.refresh()
                             withContext(Dispatchers.Main) { onForcedMaster() }
                         }
                     }
                 },
-                onFailure = { e -> fail(e.message ?: "Помилка розблокування") },
+                onFailure = { e -> fail(e.message ?: application.getString(R.string.error)) },
             )
         }
     }
