@@ -3,13 +3,19 @@ package stanissay.wear.pass.browser
 import android.os.Environment
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -20,12 +26,14 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ListHeader
+import androidx.wear.compose.material3.MaterialTheme
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.UiConstants
 import stanissay.wear.pass.utils.MainText
+import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
 
 @Composable
@@ -54,24 +62,40 @@ fun FileBrowserScreen(onImported: () -> Unit) {
         }
 
         if (viewModel.canGoUp)
-            item { Button(onClick = viewModel::up, modifier = Modifier.fillMaxWidth(), label = { MainText(DataConstants.BROWSER_UP) }) }
+            item {
+                ClickableBox(
+                    modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+                    borderColor = MaterialTheme.colorScheme.outline,
+                    onClick = viewModel::up
+                ) { MainText(DataConstants.BROWSER_UP) }
+            }
 
         items(state.items, key = { it.absolutePath }) { f ->
-            Button(
-                onClick = { if (f.isDirectory) viewModel.open(f) else viewModel.import(f, onImported) },
-                enabled = state.mode != BrowserMode.Importing,
-                modifier = Modifier.fillMaxWidth(),
-                label = { MainText(f.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                icon = {
+            ClickableBox(
+                modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+                borderColor = MaterialTheme.colorScheme.outline,
+                onClick = {
+                    if(state.mode == BrowserMode.Importing) return@ClickableBox
+                    if (f.isDirectory) viewModel.open(f) else viewModel.import(f, onImported)
+                }
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(PaddingStyle.horizontalXs),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
+                ) {
                     if(f.isDirectory) {
                         Image(
                             painter = painterResource(R.drawable.folder_ic),
                             contentDescription = "directory",
-                            modifier = Modifier.size(UiConstants.BUTTON_SIZE_S)
+                            modifier = Modifier.size(UiConstants.BUTTON_SIZE_S),
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary)
                         )
                     }
+                    MainText(f.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
-            )
+            }
         }
     }
 }

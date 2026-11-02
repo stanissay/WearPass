@@ -24,18 +24,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.CircularBar
+import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
 import stanissay.wear.pass.utils.UiConstants
 
 @Composable
-fun MasterPasswordScreen(onOpened: () -> Unit, viewModel: MasterPasswordViewModel = viewModel()) {
+fun MasterPasswordScreen(onOpened: () -> Unit, viewModel: MasterViewModel = viewModel()) {
     val state by viewModel.state.collectAsState()
     val field = rememberTextFieldState()
     val working = state is UnlockState.Working
@@ -71,12 +71,13 @@ fun MasterPasswordScreen(onOpened: () -> Unit, viewModel: MasterPasswordViewMode
             )
         }
         item {
-            Button(
-                onClick = { viewModel.unlock(field.text.toString(), onOpened) },
-                enabled = !working,
-                modifier = Modifier.fillMaxWidth(),
-                label = { MainText(stringResource(R.string.open)) }
-            )
+            ClickableBox(
+                modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+                onClick = {
+                    if(working) return@ClickableBox
+                    viewModel.unlock(field.text.toString(), onOpened)
+                }
+            ) { MainText(stringResource(R.string.open)) }
         }
         when (val s = state) {
             UnlockState.Working -> item { CircularBar() }

@@ -1,6 +1,8 @@
 package stanissay.wear.pass.pin
 
 import android.app.Application
+import android.os.SystemClock
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
@@ -13,10 +15,11 @@ import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 
-class PinUnlockViewModel(app: Application) : AndroidViewModel(app) {
-    private val vault = (app as App).vault
-    private val session = (app as App).session
-    private val pinVault = (app as App).pinVault
+class PinUnlockViewModel(application: Application) : AndroidViewModel(application) {
+    private val app = getApplication<App>()
+    private val vault = app.vault
+    private val session = app.session
+    private val pinVault = app.pinVault
     private val _state = MutableStateFlow(PinUnlockState())
     val state = _state.asStateFlow()
 
@@ -38,7 +41,12 @@ class PinUnlockViewModel(app: Application) : AndroidViewModel(app) {
                                     _state.update { it.copy(busy = false) }
                                     withContext(Dispatchers.Main) { onUnlocked() }
                                 },
-                                onFailure = { e -> fail(e.message ?: application.getString(R.string.error)) },
+                                onFailure = { e ->
+                                    pinVault.wipe()
+                                    vault.refresh()
+                                    onForcedMaster()
+                                    fail(e.message ?: application.getString(R.string.error))
+                                },
                             )
                         }
                         is PinResult.Wrong -> fail("${application.getString(R.string.attempts)} ${r.attemptsLeft}")

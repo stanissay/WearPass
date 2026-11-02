@@ -14,6 +14,6 @@ class App : Application() {
     fun wipeAll() {
         session.lock()
         pinVault.wipe()
-        vault.wipe()
+        vault.wipeFiles()
     }
 }

@@ -6,7 +6,6 @@ class VaultSession {
     @Volatile var database: KeePassDatabase? = null
         private set
     private var pendingPassword: CharArray? = null
-
     val isUnlocked get() = database != null
 
     fun open(db: KeePassDatabase, password: CharArray? = null) {
@@ -14,7 +13,6 @@ class VaultSession {
         pendingPassword = password
     }
 
-    /** Віддає пароль один раз для PinSetup. Викликач має обнулити масив після використання. */
     fun consumePassword(): CharArray? = pendingPassword.also { pendingPassword = null }
 
     fun lock() {

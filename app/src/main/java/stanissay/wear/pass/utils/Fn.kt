@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
+import java.security.KeyStore
 
 sealed class UiEvent {
     data class ShowToast(val message: String) : UiEvent()
@@ -74,3 +75,5 @@ fun writeAtomic(target: File, bytes: ByteArray) {
     tmp.writeBytes(bytes)
     check(tmp.renameTo(target)) { "Не вдалося записати ${target.name}" }
 }
+
+fun keyStore() = KeyStore.getInstance(DataConstants.ANDROID_KEY_STORE).apply { load(null) }!!

@@ -12,15 +12,10 @@ import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 
-sealed interface UnlockState {
-    data object Idle : UnlockState
-    data object Working : UnlockState
-    data class Error(val message: String) : UnlockState
-}
-
-class MasterPasswordViewModel(app: Application) : AndroidViewModel(app) {
-    private val vault = (app as App).vault
-    private val session = (app as App).session
+class MasterViewModel(application: Application) : AndroidViewModel(application) {
+    private val app = getApplication<App>()
+    private val vault = app.vault
+    private val session = app.session
     private val _state = MutableStateFlow<UnlockState>(UnlockState.Idle)
     val state = _state.asStateFlow()
 

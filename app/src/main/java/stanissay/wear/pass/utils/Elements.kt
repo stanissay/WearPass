@@ -103,6 +103,7 @@ fun MainCard(
 fun ClickableBox(
     modifier: Modifier = Modifier,
     background: Color = MainColors.TRANSPARENT,
+    borderColor: Color = MainColors.TRANSPARENT,
     shape: Shape = ShapesStyle.small,
     contentAlignment: Alignment = Alignment.Center,
     rippleRadius: Dp = Dp.Unspecified,
@@ -167,6 +168,11 @@ fun ClickableBox(
         modifier = modifier
             .clip(shape)
             .background(background)
+            .border(
+                width = UiConstants.THICKNESS,
+                color = borderColor,
+                shape = shape
+            )
             .then(clickModifier)
     ) {
         Box(

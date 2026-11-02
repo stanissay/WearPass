@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.DataConstants
+import java.io.DataInputStream
 import java.io.File
 
 class VaultRepository(private val context: Context) {
@@ -27,16 +28,15 @@ class VaultRepository(private val context: Context) {
 
     fun refresh() { _status.value = compute() }
 
-    /** Копіює у внутрішнє сховище. Стара база лишається, поки нова не пройшла перевірку. */
     fun importFrom(source: File): Result<Unit> = runCatching {
         require(source.length() in 1..DataConstants.KDBX_MAX_SIZE) { context.getString(R.string.incorrect_file) }
         val tmp = File(dir, "db.kdbx.tmp")
         try {
             source.inputStream().use { i -> tmp.outputStream().use { o -> i.copyTo(o) } }
             check(hasKdbxSignature(tmp)) { context.getString(R.string.incorrect_file) }
-            check(tmp.renameTo(dbFile)) { context.getString(R.string.error) }
             pinBlobFile.delete()
             pinMetaFile.delete()
+            check(tmp.renameTo(dbFile)) { context.getString(R.string.error) }
         } finally {
             tmp.delete()
         }
@@ -48,15 +48,14 @@ class VaultRepository(private val context: Context) {
         return dbFile.inputStream().use { KeePassDatabase.decode(it, credentials) }
     }
 
-    fun wipe() {
+    fun wipeFiles() {
         dir.deleteRecursively()
-        // TODO: видалити ключ з Android Keystore і скинути лічильник спроб PIN
         refresh()
     }
 
-    private fun hasKdbxSignature(f: File): Boolean {
+    private fun hasKdbxSignature(f: File): Boolean = runCatching {
         val head = ByteArray(8)
-        val ok = f.inputStream().use { it.read(head) == 8 }
-        return ok && head.contentEquals(DataConstants.KDBX_SIGNATURE)
-    }
+        DataInputStream(f.inputStream()).use { it.readFully(head) }
+        head.contentEquals(DataConstants.KDBX_SIGNATURE)
+    }.getOrDefault(false)
 }

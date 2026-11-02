@@ -8,12 +8,13 @@ import android.security.keystore.KeyProperties
 import android.security.keystore.UserNotAuthenticatedException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.keyStore
 import stanissay.wear.pass.utils.toChars
 import stanissay.wear.pass.utils.toUtf8
 import stanissay.wear.pass.utils.writeAtomic
 import java.io.File
 import java.security.GeneralSecurityException
-import java.security.KeyStore
 import javax.crypto.AEADBadTagException
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -28,7 +29,7 @@ class SystemLockVault(private val blobFile: File) {
         try {
             val c = Cipher.getInstance("AES/GCM/NoPadding")
             c.init(Cipher.ENCRYPT_MODE, createKey())
-            writeAtomic(blobFile, byteArrayOf(VERSION) + c.iv + c.doFinal(plain))
+            writeAtomic(blobFile, byteArrayOf(DataConstants.VERSION) + c.iv + c.doFinal(plain))
         } finally {
             plain.fill(0)
         }
@@ -38,10 +39,10 @@ class SystemLockVault(private val blobFile: File) {
         if (!blobFile.exists()) return@withContext SystemUnlockResult.Invalidated
         try {
             val blob = blobFile.readBytes()
-            val key = keyStore().getKey(ALIAS, null) as? SecretKey ?: run { wipe(); return@withContext SystemUnlockResult.Invalidated }
+            val key = keyStore().getKey(DataConstants.SYS_ALIAS, null) as? SecretKey ?: run { wipe(); return@withContext SystemUnlockResult.Invalidated }
             val c = Cipher.getInstance("AES/GCM/NoPadding")
-            c.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, blob, 1, IV_LEN))
-            val plain = c.doFinal(blob, 1 + IV_LEN, blob.size - 1 - IV_LEN)
+            c.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(128, blob, 1, DataConstants.IV_LEN))
+            val plain = c.doFinal(blob, 1 + DataConstants.IV_LEN, blob.size - 1 - DataConstants.IV_LEN)
             val chars = plain.toChars()
             plain.fill(0)
             SystemUnlockResult.Success(chars)
@@ -62,15 +63,15 @@ class SystemLockVault(private val blobFile: File) {
 
     fun wipe() {
         blobFile.delete()
-        runCatching { keyStore().deleteEntry(ALIAS) }
+        runCatching { keyStore().deleteEntry(DataConstants.SYS_ALIAS) }
     }
 
     private fun createKey(): SecretKey {
         val ks = keyStore()
-        if (ks.containsAlias(ALIAS)) ks.deleteEntry(ALIAS)
-        val gen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore")
+        if (ks.containsAlias(DataConstants.SYS_ALIAS)) ks.deleteEntry(DataConstants.SYS_ALIAS)
+        val gen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, DataConstants.ANDROID_KEY_STORE)
         gen.init(
-            KeyGenParameterSpec.Builder(ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            KeyGenParameterSpec.Builder(DataConstants.SYS_ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(256)
@@ -78,13 +79,5 @@ class SystemLockVault(private val blobFile: File) {
                 .build()
         )
         return gen.generateKey()
-    }
-
-    private fun keyStore() = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
-
-    private companion object {
-        const val ALIAS = "wearkeepass_system_lock"
-        const val VERSION: Byte = 1
-        const val IV_LEN = 12
     }
 }

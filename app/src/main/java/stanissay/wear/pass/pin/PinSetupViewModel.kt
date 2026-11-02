@@ -13,10 +13,11 @@ import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 
-class PinSetupViewModel(app: Application) : AndroidViewModel(app) {
-    private val vault = (app as App).vault
-    private val session = (app as App).session
-    private val pinVault = (app as App).pinVault
+class PinSetupViewModel(application: Application) : AndroidViewModel(application) {
+    private val app = getApplication<App>()
+    private val vault = app.vault
+    private val session = app.session
+    private val pinVault = app.pinVault
     private val _state = MutableStateFlow(PinSetupState())
     val state = _state.asStateFlow()
     private var first: CharArray? = null

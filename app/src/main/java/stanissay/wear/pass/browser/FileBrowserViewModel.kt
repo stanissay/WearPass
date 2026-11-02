@@ -19,8 +19,11 @@ import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.DataConstants
 import java.io.File
 
-class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
-    private val vault = (app as App).vault
+class FileBrowserViewModel(application: Application) : AndroidViewModel(application) {
+    private val app = getApplication<App>()
+    private val vault = app.vault
+    private val pinVault = app.pinVault
+    private val session = app.session
     private val root: File = Environment.getExternalStorageDirectory()
     private val _state = MutableStateFlow(BrowserUiState(dir = root))
     val state = _state.asStateFlow()
@@ -74,7 +77,11 @@ class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
                     )
                 )
             }
-            if (result.isSuccess) withContext(Dispatchers.Main) { onDone() }
+            if (result.isSuccess) {
+                pinVault.wipe()
+                session.lock()
+                withContext(Dispatchers.Main) { onDone() }
+            }
         }
     }
 

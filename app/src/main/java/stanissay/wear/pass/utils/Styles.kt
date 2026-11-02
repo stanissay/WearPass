@@ -14,11 +14,11 @@ import androidx.wear.compose.material3.Typography
 
 object MainColors {
     val BACKGROUND = Color(0xFF000000)
-    val FIRST_ACCENT = Color(0xFF294D68)
-    val SECOND_ACCENT = Color(0xFF28515B)
-    val WHITE = Color(0xFFCECECE)
-    val GRAY = Color(0xFF757575)
-    val BORDER = Color(0xFF242424)
+    val FIRST_ACCENT = Color(0xFF638FA8)
+    val SECOND_ACCENT = Color(0xFF3E4348)
+    val WHITE = Color(0xFFD5D8DC)
+    val GRAY = Color(0xFF686D73)
+    val BORDER = Color(0xFF242629)
     val TRANSPARENT = Color(0x00000000)
 }
 

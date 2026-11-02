@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.wear.compose.material3.MaterialTheme
+import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.UiConstants
 import stanissay.wear.pass.utils.MainText
@@ -84,11 +85,10 @@ fun PinPad(
 
 @Composable
 private fun KeyButton(label: String, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier.size(UiConstants.BUTTON_SIZE)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainer)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+    ClickableBox(
+        modifier = Modifier.size(UiConstants.BUTTON_SIZE),
+        shape = CircleShape,
+        borderColor = MaterialTheme.colorScheme.outline,
+        onClick = onClick
     ) { MainText(label) }
 }
