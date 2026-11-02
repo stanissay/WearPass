@@ -14,7 +14,7 @@ import androidx.wear.compose.material3.Typography
 
 object MainColors {
     val BACKGROUND = Color(0xFF000000)
-    val FIRST_ACCENT = Color(0xFF638FA8)
+    val FIRST_ACCENT = Color(0xFF527F89)
     val SECOND_ACCENT = Color(0xFF3E4348)
     val WHITE = Color(0xFFD5D8DC)
     val GRAY = Color(0xFF686D73)

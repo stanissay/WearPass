@@ -42,7 +42,7 @@ fun FileBrowserScreen(onImported: () -> Unit) {
     val clipboard = LocalClipboard.current
     val packageName = LocalContext.current.packageName
     val state by viewModel.state.collectAsState()
-    val title = if (state.dir.absolutePath == Environment.getExternalStorageDirectory().absolutePath) "/" else state.dir.name
+    val title = if (state.dir.absolutePath == Environment.getExternalStorageDirectory().absolutePath) DataConstants.BROWSER_ROOT else state.dir.name
     val adbCommand = "adb shell appops set $packageName MANAGE_EXTERNAL_STORAGE allow"
 
     BackHandler(enabled = viewModel.canGoUp) { viewModel.up() }

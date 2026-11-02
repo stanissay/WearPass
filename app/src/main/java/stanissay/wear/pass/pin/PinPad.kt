@@ -35,6 +35,7 @@ fun PinPad(
     enabled: Boolean = true,
     resetKey: Any = Unit,
     onComplete: (CharArray) -> Unit,
+    onSettings: () -> Unit
 ) {
     var digits by remember(resetKey) { mutableStateOf("") }
 
@@ -75,7 +76,7 @@ fun PinPad(
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)) {
-                Spacer(Modifier.size(UiConstants.BUTTON_SIZE))
+                KeyButton("⚙") { onSettings() }
                 KeyButton("0") { press('0') }
                 KeyButton("⌫") { digits = digits.dropLast(1) }
             }

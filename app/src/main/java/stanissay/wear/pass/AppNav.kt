@@ -50,12 +50,16 @@ fun AppNav(vault: VaultRepository) {
                 MasterPasswordScreen(onOpened = { backStack.clear(); backStack.add(PinSetupKey) })
             }
             entry<PinSetupKey> {
-                PinSetupScreen(onDone = { backStack.clear(); backStack.add(GroupKey()) })
+                PinSetupScreen(
+                    onDone = { backStack.clear(); backStack.add(GroupKey()) },
+                    onSettings = { backStack.add(SettingsKey) }
+                )
             }
             entry<PinUnlockKey> {
                 PinUnlockScreen(
                     onUnlocked = { backStack.clear(); backStack.add(GroupKey()) },
                     onForcedMaster = { backStack.clear(); backStack.add(MasterPasswordKey) },
+                    onSettings = { backStack.add(SettingsKey) }
                 )
             }
             entry<GroupKey> { Stub("Групи й записи") }

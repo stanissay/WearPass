@@ -8,13 +8,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import stanissay.wear.pass.R
 
 @Composable
-fun PinSetupScreen(onDone: () -> Unit, viewModel: PinSetupViewModel = viewModel()) {
+fun PinSetupScreen(
+    onDone: () -> Unit,
+    onSettings: () -> Unit,
+    viewModel: PinSetupViewModel = viewModel()
+) {
     val state by viewModel.state.collectAsState()
     PinPad(
         title = if (!state.confirming) stringResource(R.string.create_pin) else stringResource(R.string.confirm_pin),
         subtitle = state.error,
         enabled = !state.saving,
         resetKey = state.resetKey,
-        onComplete = { viewModel.onPin(it, onDone) }
+        onComplete = { viewModel.onPin(it, onDone) },
+        onSettings = onSettings
     )
 }
