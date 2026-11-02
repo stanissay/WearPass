@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
@@ -35,9 +34,18 @@ fun AppNav(vault: VaultRepository) {
                     backStack.clear(); backStack.add(MasterPasswordKey)
                 })
             }
-            entry<MasterPasswordKey> { Stub("Майстер-пароль") }
-            entry<PinSetupKey> { Stub("Створи PIN") }
-            entry<PinUnlockKey> { Stub("PIN") }
+            entry<MasterPasswordKey> {
+                MasterPasswordScreen(onOpened = { backStack.clear(); backStack.add(PinSetupKey) })
+            }
+            entry<PinSetupKey> {
+                PinSetupScreen(onDone = { backStack.clear(); backStack.add(GroupKey()) })
+            }
+            entry<PinUnlockKey> {
+                PinUnlockScreen(
+                    onUnlocked = { backStack.clear(); backStack.add(GroupKey()) },
+                    onForcedMaster = { backStack.clear(); backStack.add(MasterPasswordKey) },
+                )
+            }
             entry<GroupKey> { Stub("Групи й записи") }
             entry<EntryKey> { Stub("Запис") }
             entry<SettingsKey> { Stub("Налаштування") }

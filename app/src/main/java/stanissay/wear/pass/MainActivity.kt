@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import stanissay.wear.pass.utils.AppEventManager
 import stanissay.wear.pass.utils.MainTheme
+import stanissay.wear.pass.utils.UiEvent
+import stanissay.wear.pass.utils.showCustomToast
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +22,17 @@ class MainActivity : ComponentActivity() {
         val vault = (application as App).vault
         setContent {
             MainTheme {
+                LaunchedEffect(Unit) {
+                    AppEventManager.uiEvents.collect { event ->
+                        when (event) {
+                            is UiEvent.ShowToast -> {
+                                showCustomToast(event.message, this@MainActivity)
+                                AppEventManager.resetReplayCache()
+                            }
+                        }
+                    }
+                }
+
                 AppNav(vault)
             }
         }

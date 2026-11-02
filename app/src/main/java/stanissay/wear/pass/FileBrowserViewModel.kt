@@ -6,6 +6,7 @@ import android.os.Environment
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.Clipboard
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.utils.BrowserMode
 import stanissay.wear.pass.utils.BrowserUiState
+import stanissay.wear.pass.utils.DataKeys
 import java.io.File
 
 class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
@@ -29,7 +31,7 @@ class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
         val dir = _state.value.dir
         val list = if (access) {
             dir.listFiles().orEmpty()
-                .filter { it.isDirectory || it.extension.equals("kdbx", ignoreCase = true) }
+                .filter { it.isDirectory || it.extension.equals(DataKeys.KDBX, ignoreCase = true) }
                 .sortedWith(compareBy({ !it.isDirectory }, { it.name.lowercase() }))
         } else emptyList()
 
@@ -66,7 +68,11 @@ class FileBrowserViewModel(app: Application) : AndroidViewModel(app) {
                 it.copy(
                     mode = result.fold(
                         onSuccess = { BrowserMode.Idle },
-                        onFailure = { e -> BrowserMode.Failed(e.message ?: "Помилка імпорту") }
+                        onFailure = { e ->
+                            BrowserMode.Failed(e.message
+                                ?: application.getString(R.string.import_error)
+                            )
+                        }
                     )
                 )
             }

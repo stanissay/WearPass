@@ -16,3 +16,8 @@ data class BrowserUiState(
     val items: List<File> = emptyList(),
     val mode: BrowserMode = BrowserMode.Idle,
 )
+
+object DataKeys {
+    const val KDBX = "kdbx"
+    const val BROWSER_UP = ".."
+}

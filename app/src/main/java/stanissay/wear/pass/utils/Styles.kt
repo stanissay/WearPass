@@ -14,8 +14,8 @@ import androidx.wear.compose.material3.Typography
 
 object MainColors {
     val BACKGROUND = Color(0xFF000000)
-    val FIRST_ACCENT = Color(0xFF398BDB)
-    val SECOND_ACCENT = Color(0xFF38C6A5)
+    val FIRST_ACCENT = Color(0xFF3B5D7C)
+    val SECOND_ACCENT = Color(0xFF3D6B5D)
     val WHITE = Color(0xFFCECECE)
     val GRAY = Color(0xFF757575)
     val BORDER = Color(0xFF242424)
@@ -55,7 +55,7 @@ val ColorStyle = ColorScheme(
     background = MainColors.BACKGROUND,
     surfaceContainer = MainColors.GRAY,
     onBackground = MainColors.WHITE,
-    onSurface = MainColors.BORDER
+    outline = MainColors.BORDER
 )
 
 val ShapesStyle = Shapes(
@@ -78,6 +78,9 @@ object MainConstants {
 
     val THICKNESS = 1.dp
     val ELEVATION = 8.dp
+    val SPACE = 4.dp
+
+    const val PIN_LENGTH = 4
 }
 
 object PaddingStyle {

@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">WearPass</string>
+    <string name="app_name" translatable="false">WearPass</string>
+    <string name="no_access">No access to files. Run:</string>
+    <string name="import_error">Import error</string>
 </resources>

@@ -1,6 +1,10 @@
 package stanissay.wear.pass
 
 import android.content.Context
+import app.keemobile.kotpass.cryptography.EncryptedValue
+import app.keemobile.kotpass.database.Credentials
+import app.keemobile.kotpass.database.KeePassDatabase
+import app.keemobile.kotpass.database.decode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import stanissay.wear.pass.utils.VaultStatus
@@ -31,11 +35,16 @@ class VaultRepository(private val context: Context) {
             source.inputStream().use { i -> tmp.outputStream().use { o -> i.copyTo(o) } }
             check(hasKdbxSignature(tmp)) { "Це не файл KDBX" }
             check(tmp.renameTo(dbFile)) { "Не вдалося замінити базу" }
-            pinBlob.delete() // нова база означає старий PIN-блок недійсний
+            pinBlob.delete()
         } finally {
             tmp.delete()
         }
         refresh()
+    }
+
+    fun openDatabase(password: String): KeePassDatabase {
+        val credentials = Credentials.from(EncryptedValue.fromString(password))
+        return dbFile.inputStream().use { KeePassDatabase.decode(it, credentials) }
     }
 
     fun wipe() {

@@ -260,7 +260,7 @@ fun PageTitle(
 }
 
 @Composable
-fun DialogTitle(
+fun PageSubTitle(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Center

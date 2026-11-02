@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -22,6 +23,7 @@ import androidx.wear.compose.material3.ListHeader
 import stanissay.wear.pass.utils.BrowserMode
 import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.ClickableBox
+import stanissay.wear.pass.utils.DataKeys
 import stanissay.wear.pass.utils.MainConstants
 import stanissay.wear.pass.utils.MainText
 
@@ -43,16 +45,15 @@ fun FileBrowserScreen(onImported: () -> Unit) {
             BrowserMode.NoAccess -> item {
                 ClickableBox(
                     onLongClick = { viewModel.copyText(clipboard, adbCommand) }
-                ) { MainText("Немає доступу до файлів. Виконай:\n$adbCommand") }
+                ) { MainText("${stringResource(R.string.no_access)}\n$adbCommand") }
             }
             BrowserMode.Importing -> item { CircularBar() }
             is BrowserMode.Failed -> item { MainText(mode.message) }
             BrowserMode.Idle -> Unit
         }
 
-        if (viewModel.canGoUp) {
-            item { Button(onClick = viewModel::up, modifier = Modifier.fillMaxWidth(), label = { MainText("..") }) }
-        }
+        if (viewModel.canGoUp)
+            item { Button(onClick = viewModel::up, modifier = Modifier.fillMaxWidth(), label = { MainText(DataKeys.BROWSER_UP) }) }
 
         items(state.items, key = { it.absolutePath }) { f ->
             Button(

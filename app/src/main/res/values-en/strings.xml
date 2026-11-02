@@ -1,0 +1,4 @@
+<resources>
+    <string name="no_access">No access to files. Run:</string>
+    <string name="import_error">Import error</string>
+</resources>

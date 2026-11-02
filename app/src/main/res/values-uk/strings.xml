@@ -1,0 +1,4 @@
+<resources>
+    <string name="no_access">Немає доступу до файлів. Виконай:</string>
+    <string name="import_error">Помилка імпорту</string>
+</resources>
