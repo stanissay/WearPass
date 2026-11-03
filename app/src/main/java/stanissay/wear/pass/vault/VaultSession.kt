@@ -1,6 +1,8 @@
 package stanissay.wear.pass.vault
 
 import app.keemobile.kotpass.database.KeePassDatabase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class VaultSession {
     @Volatile var index: VaultIndex? = null
@@ -9,11 +11,14 @@ class VaultSession {
         private set
     private var pendingPassword: CharArray? = null
     val isUnlocked get() = index != null
+    private val _unlocked = MutableStateFlow(false)
+    val unlocked = _unlocked.asStateFlow()
 
     fun open(db: KeePassDatabase, password: CharArray? = null, sync: SyncNote = SyncNote.None) {
         index = VaultIndex(db)
         pendingPassword = password
         lastSync = sync
+        _unlocked.value = true
     }
 
     fun lock() {
@@ -21,7 +26,13 @@ class VaultSession {
         lastSync = SyncNote.None
         pendingPassword?.fill('\u0000')
         pendingPassword = null
+        _unlocked.value = false
     }
 
     fun consumePassword(): CharArray? = pendingPassword.also { pendingPassword = null }
+
+    fun stashPassword(password: CharArray) {
+        pendingPassword?.fill('\u0000')
+        pendingPassword = password
+    }
 }

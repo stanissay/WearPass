@@ -1,5 +1,7 @@
 package stanissay.wear.pass.utils
 
+import androidx.compose.ui.unit.dp
+
 object DataConstants {
     const val KDBX = "kdbx"
     const val KDBX_MAX_SIZE = 64L * 1024 * 1024
@@ -26,4 +28,5 @@ object DataConstants {
     const val URL = "URL"
     const val NOTES = "Notes"
     const val PASSWORD_VISIBLE_MS = 15_000L
+    val SWIPE_THRESHOLD = 72.dp
 }

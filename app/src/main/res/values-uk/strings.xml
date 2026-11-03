@@ -9,9 +9,6 @@
     <string name="incorrect_pin">Невірний PIN</string>
     <string name="attempts">Невірний PIN. Спроб:</string>
     <string name="session_expired">Сесію завершено</string>
-    <string name="sync_updated">Базу оновлено з файлу</string>
-    <string name="sync_source_missing">Файл-джерело не знайдено, використано збережену копію</string>
-    <string name="sync_source_unreadable">Файл-джерело не вдалося прочитати, використано збережену копію</string>
     <string name="unnamed">(без назви)</string>
     <string name="no_entry">Немає запису</string>
     <string name="no_group">Немає групи</string>

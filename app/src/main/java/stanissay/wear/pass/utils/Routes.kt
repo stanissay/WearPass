@@ -2,6 +2,7 @@ package stanissay.wear.pass.utils
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
+import stanissay.wear.pass.settings.UnlockMethod
 
 @Serializable data object FileBrowserKey : NavKey
 @Serializable data object MasterPasswordKey : NavKey
@@ -10,3 +11,6 @@ import kotlinx.serialization.Serializable
 @Serializable data class GroupKey(val groupUuid: String? = null) : NavKey
 @Serializable data class EntryKey(val entryUuid: String) : NavKey
 @Serializable data object SettingsKey : NavKey
+@Serializable data class ReauthKey(val target: UnlockMethod) : NavKey
+@Serializable data object SafeSetupKey : NavKey
+@Serializable data object SystemSetupKey : NavKey

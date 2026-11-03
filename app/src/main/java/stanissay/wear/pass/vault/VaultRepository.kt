@@ -8,6 +8,7 @@ import app.keemobile.kotpass.database.decode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import stanissay.wear.pass.R
+import stanissay.wear.pass.settings.UnlockMethod
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.sha256
 import stanissay.wear.pass.utils.writeAtomic
@@ -24,6 +25,12 @@ class VaultRepository(private val context: Context) {
     private val sourcePathFile get() = File(dir, "source.path")
     val sourcePath: String?
         get() = sourcePathFile.takeIf { it.exists() }?.readText()?.trim()?.ifEmpty { null }
+    private val methodFile get() = File(dir, "unlock.method")
+    val unlockMethod: UnlockMethod
+        get() = methodFile.takeIf { it.exists() }?.readText()?.trim()
+            ?.let { n -> UnlockMethod.entries.firstOrNull { it.name == n } } ?: UnlockMethod.Pin
+
+    fun setUnlockMethod(m: UnlockMethod) = writeAtomic(methodFile, m.name.toByteArray())
 
     private fun credentials(password: String) =
         Credentials.from(EncryptedValue.fromString(password))

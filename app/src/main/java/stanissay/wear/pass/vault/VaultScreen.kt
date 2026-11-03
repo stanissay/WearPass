@@ -41,8 +41,8 @@ import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PaddingStyle
-import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.PageTitle
+import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.UiConstants
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -50,50 +50,47 @@ import kotlin.time.Duration.Companion.milliseconds
 fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -> Unit) {
     val session = (LocalContext.current.applicationContext as App).session
     val view = remember(groupId) { session.index?.group(groupId) }
-    val syncText = if (groupId == null) when (session.lastSync) {
-        SyncNote.Updated -> stringResource(R.string.sync_updated)
-        SyncNote.SourceMissing -> stringResource(R.string.sync_source_missing)
-        SyncNote.SourceUnreadable -> stringResource(R.string.sync_source_unreadable)
-        SyncNote.None -> null
-    } else null
 
     ScalingLazyColumn(modifier = Modifier.fillMaxSize()) {
-        item { ListHeader { PageTitle(view?.name.orEmpty()) } }
-
-        syncText?.let { item { MainText(it, style = MaterialTheme.typography.labelMedium) } }
-
-        if (view == null) {
-            item { MainText(stringResource(R.string.no_group)) }
-        } else {
-            items(view.groups, key = { "g-${it.id}" }) { g ->
+        view?.let { v ->
+            item { ListHeader { PageTitle(view.name) } }
+            items(v.groups, key = { "g-${it.id}" }) { g ->
                 ClickableBox(
                     onClick = { onGroup(g.id) },
-                    modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(UiConstants.BASE_SIZE),
                     borderColor = MaterialTheme.colorScheme.outline
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxSize().padding(PaddingStyle.horizontalXs),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(PaddingStyle.horizontalXs),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
                     ) {
-                        EntryIcon(g.customIconId, g.name)
+                        EntryIcon(g.icon, g.name)
                         SubTitle(g.name, modifier = Modifier.weight(1f), textAlign = TextAlign.Start)
                         MainText("${g.entryCount}")
                     }
                 }
             }
-            items(view.entries, key = { "e-${it.id}" }) { e ->
+            items(v.entries, key = { "e-${it.id}" }) { e ->
                 ClickableBox(
                     onClick = { onEntry(e.id) },
-                    modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(UiConstants.BASE_SIZE),
                     borderColor = MaterialTheme.colorScheme.outline
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxSize().padding(PaddingStyle.horizontalXs),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(PaddingStyle.horizontalXs),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
                     ) {
-                        EntryIcon(e.customIconId, e.title)
+                        EntryIcon(e.icon, e.title)
                         Column(
                             horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.Center
@@ -104,8 +101,8 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
                     }
                 }
             }
-            if (view.groups.isEmpty() && view.entries.isEmpty()) item { MainText(stringResource(R.string.empty)) }
-        }
+            if (v.groups.isEmpty() && v.entries.isEmpty()) item { MainText(stringResource(R.string.empty)) }
+        } ?: item { MainText(stringResource(R.string.no_group)) }
     }
 }
 
@@ -123,16 +120,15 @@ fun EntryScreen(entryId: String) {
     }
 
     ScalingLazyColumn(modifier = Modifier.fillMaxSize()) {
-        item { ListHeader { EntryIcon(entry?.customIconId, entry?.title) } }
-        item { ListHeader { PageTitle(entry?.title?.ifEmpty { stringResource(R.string.unnamed) }.orEmpty()) } }
-
-        if (entry == null) {
-            item { MainText(stringResource(R.string.no_entry)) }
-        } else {
-            if (entry.userName.isNotEmpty()) item { Field(stringResource(R.string.login), entry.userName) }
+        entry?.let { e ->
+            item { ListHeader { EntryIcon(e.icon, e.title) } }
+            item { ListHeader { PageTitle(e.title) } }
+            if (e.userName.isNotEmpty()) item { Field(stringResource(R.string.login), e.userName) }
             item {
                 ClickableBox(
-                    modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(UiConstants.BASE_SIZE),
                     borderColor = MaterialTheme.colorScheme.outline,
                     onClick = { password = if (password == null) session.index?.password(entryId) else null }
                 ) {
@@ -140,33 +136,37 @@ fun EntryScreen(entryId: String) {
                         ?: MainText(stringResource(R.string.show_password))
                 }
             }
-            if (entry.url.isNotEmpty()) item { Field(stringResource(R.string.URL), entry.url) }
-            if (entry.notes.isNotEmpty()) item { Field(stringResource(R.string.notes), entry.notes) }
-        }
+            if (e.url.isNotEmpty()) item { Field(stringResource(R.string.URL), e.url) }
+            if (e.notes.isNotEmpty()) item { Field(stringResource(R.string.notes), e.notes) }
+        } ?: item { MainText(stringResource(R.string.no_entry)) }
     }
 }
 
 @Composable
 private fun Field(label: String, value: String) {
-    Column(Modifier.fillMaxWidth().padding(PaddingStyle.horizontalXs)) {
+    Column(Modifier
+        .fillMaxWidth()
+        .padding(PaddingStyle.horizontalXs)) {
         SubTitle(label)
         MainText(value, textAlign = TextAlign.Start)
     }
 }
 
 @Composable
-fun EntryIcon(customIconId: String?, title: String?, modifier: Modifier = Modifier) {
-    val session = (LocalContext.current.applicationContext as App).session
-    val bitmap by produceState<ImageBitmap?>(null, customIconId) {
-        value = customIconId?.let { id ->
-            withContext(Dispatchers.Default) { session.index?.customIcon(id) }
+fun EntryIcon(icon: IconRef, title: String?, modifier: Modifier = Modifier, hideDefaultKey: Boolean = false) {
+    val app = LocalContext.current.applicationContext as App
+    val bitmap by produceState<ImageBitmap?>(null, icon) {
+        value = withContext(Dispatchers.Default) {
+            icon.customId?.let { app.session.index?.customIcon(it) }
+                ?: icon.builtIn
+                    ?.takeUnless { hideDefaultKey && it == 0 }
+                    ?.let { app.builtInIcons.get(it) }
         }
     }
     val bmp = bitmap
 
     Box(
-        modifier = modifier.size(UiConstants.BUTTON_SIZE)
-            .clip(CircleShape),
+        modifier = modifier.size(UiConstants.BUTTON_SIZE).clip(MaterialTheme.shapes.extraSmall),
         contentAlignment = Alignment.Center
     ) {
         if (bmp != null) {
@@ -179,7 +179,8 @@ fun EntryIcon(customIconId: String?, title: String?, modifier: Modifier = Modifi
         } else {
             Box(
                 modifier = modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.secondary),
+                    .background(MaterialTheme.colorScheme.secondary)
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 val letter = title?.firstOrNull { it.isLetterOrDigit() }?.uppercaseChar()?.toString() ?: "•"

@@ -36,7 +36,7 @@ class VaultIndex(db: KeePassDatabase) {
             name = g.name,
             groups = g.groups
                 .filter { it.uuid.toString() in groups }
-                .map { GroupItem(it.uuid.toString(), it.name, it.entries.size) }
+                .map { GroupItem(it.uuid.toString(), it.name, it.entries.size, it.iconRef()) }
                 .sortedBy { it.name.lowercase() },
             entries = g.entries
                 .map {
@@ -44,8 +44,9 @@ class VaultIndex(db: KeePassDatabase) {
                         it.uuid.toString(),
                         it.text(DataConstants.TITLE),
                         it.text(DataConstants.USER),
-                        it.iconId())
+                        it.iconRef())
                 }.sortedBy { it.title.lowercase() },
+            icon = g.iconRef()
         )
     }
 
@@ -56,7 +57,7 @@ class VaultIndex(db: KeePassDatabase) {
             it.text(DataConstants.USER),
             it.text(DataConstants.URL),
             it.text(DataConstants.NOTES),
-            it.iconId()
+            it.iconRef()
         )
     }
 
@@ -64,7 +65,15 @@ class VaultIndex(db: KeePassDatabase) {
 
     private fun Entry.text(key: String): String = fields[key]?.content.orEmpty()
 
-    private fun Entry.iconId(): String? = customIconUuid?.toString()?.takeIf { it in customIcons }
+    private fun Entry.iconRef() = IconRef(
+        customId = customIconUuid?.toString()?.takeIf { it in customIcons },
+        builtIn = icon.ordinal,
+    )
+
+    private fun Group.iconRef() = IconRef(
+        customId = customIconUuid?.toString()?.takeIf { it in customIcons },
+        builtIn = icon.ordinal,
+    )
 
     fun customIcon(id: String): ImageBitmap? {
         iconCache.get(id)?.let { return it }
