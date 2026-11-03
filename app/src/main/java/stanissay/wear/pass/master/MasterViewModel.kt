@@ -30,10 +30,8 @@ class MasterViewModel(application: Application) : AndroidViewModel(application) 
                     withContext(Dispatchers.Main) { onOpened() }
                 },
                 onFailure = { e ->
-                    _state.value = UnlockState.Error(
-                        e.message ?: e::class.simpleName ?: application.getString(R.string.error)
-                    )
-                },
+                    _state.value = UnlockState.Error(e.message ?: e::class.simpleName ?: application.getString(R.string.error))
+                }
             )
         }
     }

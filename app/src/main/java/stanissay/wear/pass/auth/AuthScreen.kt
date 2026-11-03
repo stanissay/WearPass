@@ -16,26 +16,26 @@ import stanissay.wear.pass.utils.MainText
 fun AuthScreen(
     onConfirmed: () -> Unit,
     onForcedMaster: () -> Unit,
-    vm: AuthViewModel = viewModel(),
+    viewModel: AuthViewModel = viewModel(),
 ) {
-    val ui by vm.state.collectAsState()
-    when (vm.method) {
+    val state by viewModel.state.collectAsState()
+    when (viewModel.method) {
         UnlockMethod.Pin -> PinPad(
             title = stringResource(R.string.confirm_pin),
-            subtitle = ui.message,
-            enabled = !ui.busy,
-            resetKey = ui.resetKey,
-            onComplete = { vm.confirmPin(it, onConfirmed, onForcedMaster) },
+            subtitle = state.message,
+            enabled = !state.busy,
+            resetKey = state.resetKey,
+            onComplete = { viewModel.confirmPin(it, onConfirmed, onForcedMaster) },
         )
         UnlockMethod.SystemLock -> {
             LifecycleResumeEffect(Unit) {
-                vm.confirmSystem(onConfirmed, onForcedMaster)
+                viewModel.confirmSystem(onConfirmed, onForcedMaster)
                 onPauseOrDispose { }
             }
             SystemPrompt(
                 title = stringResource(R.string.confirming),
-                busy = ui.busy, locked = ui.locked, message = ui.message,
-                onRetry = { vm.confirmSystem(onConfirmed, onForcedMaster) },
+                busy = state.busy, locked = state.locked, message = state.message,
+                onRetry = { viewModel.confirmSystem(onConfirmed, onForcedMaster) },
             )
         }
         UnlockMethod.Safe -> MainText("Сейф ще не реалізований")

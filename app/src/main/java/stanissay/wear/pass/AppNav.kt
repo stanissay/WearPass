@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.wear.compose.navigation3.rememberSwipeDismissableSceneStrategy
 import stanissay.wear.pass.auth.AuthScreen
@@ -61,6 +63,10 @@ fun AppNav(vault: VaultRepository) {
         NavDisplay(
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
+            entryDecorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator(),
+            ),
             sceneStrategies = listOf(rememberSwipeDismissableSceneStrategy()),
             entryProvider = entryProvider {
                 entry<FileBrowserKey> {
@@ -119,10 +125,7 @@ fun AppNav(vault: VaultRepository) {
                 entry<SystemSetupKey> {
                     DisposableEffect(Unit) { onDispose { session.clearPendingPassword() } }
                     Guarded(session.isUnlocked, relock) {
-                        SystemSetupScreen(
-                            onDone = { backStack.clear(); backStack.add(GroupKey()) },
-                            onCancel = { backStack.removeLastOrNull() }
-                        )
+                        SystemSetupScreen(onDone = { backStack.clear(); backStack.add(GroupKey()) })
                     }
                 }
                 entry<SystemUnlockKey> {

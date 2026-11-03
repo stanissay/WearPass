@@ -1,6 +1,6 @@
 package stanissay.wear.pass.auth
 
-data class ReauthState(
+data class AuthState(
     val busy: Boolean = false,
     val locked: Boolean = false,
     val message: String? = null,

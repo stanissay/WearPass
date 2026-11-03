@@ -1,8 +1,6 @@
 package stanissay.wear.pass.pin
 
 import android.app.Application
-import android.os.SystemClock
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.application
 import androidx.lifecycle.viewModelScope
@@ -61,6 +59,5 @@ class PinUnlockViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun fail(message: String) =
-        _state.update { it.copy(busy = false, error = message, resetKey = it.resetKey + 1) }
+    private fun fail(message: String) = _state.update { it.copy(busy = false, error = message, resetKey = it.resetKey + 1) }
 }

@@ -22,18 +22,18 @@ import stanissay.wear.pass.utils.PageTitle
 fun SystemUnlockScreen(
     onUnlocked: () -> Unit,
     onForcedMaster: () -> Unit,
-    vm: SystemUnlockViewModel = viewModel(),
+    viewModel: SystemUnlockViewModel = viewModel(),
 ) {
-    val ui by vm.state.collectAsState()
+    val state by viewModel.state.collectAsState()
     LifecycleResumeEffect(Unit) {
-        vm.tryUnlock(onUnlocked, onForcedMaster)
+        viewModel.tryUnlock(onUnlocked, onForcedMaster)
         onPauseOrDispose { }
     }
     SystemPrompt(
         title = stringResource(R.string.unlocking),
-        busy = ui.busy, locked = ui.locked, message = ui.message,
-        onRetry = { vm.tryUnlock(onUnlocked, onForcedMaster) },
-        onMaster = onForcedMaster,
+        busy = state.busy, locked = state.locked, message = state.message,
+        onRetry = { viewModel.tryUnlock(onUnlocked, onForcedMaster) },
+        onMaster = onForcedMaster
     )
 }
 
@@ -46,6 +46,8 @@ fun SystemPrompt(
     onRetry: () -> Unit,
     onMaster: (() -> Unit)? = null,
 ) {
+    val needsAction = !busy && (locked || message != null)
+
     ScalingLazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -54,9 +56,11 @@ fun SystemPrompt(
         if (busy) item { CircularBar() }
         if (locked) item { MainText(stringResource(R.string.unlock_watch)) }
         message?.let { m -> item { MainText(m, style = MaterialTheme.typography.labelMedium) } }
-        item { ClickableListItem(onClick = onRetry) { MainText(stringResource(R.string.open)) } }
-        onMaster?.let { go ->
-            item { ClickableListItem(onClick = go) { MainText(stringResource(R.string.master_password)) } }
+        if(needsAction) {
+            item { ClickableListItem(onClick = onRetry) { MainText(stringResource(R.string.open)) } }
+            onMaster?.let { go ->
+                item { ClickableListItem(onClick = go) { MainText(stringResource(R.string.master_password)) } }
+            }
         }
     }
 }

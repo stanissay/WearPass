@@ -17,8 +17,8 @@ import stanissay.wear.pass.sl.SystemUnlockResult
 
 class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val app = getApplication<App>()
-    val method = app.vault.unlockMethod
-    private val _state = MutableStateFlow(ReauthState())
+    val method get() = app.vault.unlockMethod
+    private val _state = MutableStateFlow(AuthState())
     val state = _state.asStateFlow()
 
     fun confirmPin(pin: CharArray, onConfirmed: () -> Unit, onForcedMaster: () -> Unit) {
@@ -50,19 +50,19 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     fun confirmSystem(onConfirmed: () -> Unit, onForcedMaster: () -> Unit) {
         if (_state.value.busy) return
-        _state.value = ReauthState(busy = true)
+        _state.value = AuthState(busy = true)
         viewModelScope.launch(Dispatchers.Default) {
             when (val r = app.systemVault.unlock()) {
                 is SystemUnlockResult.Success -> {
                     app.session.stashPassword(r.password)
                     withContext(Dispatchers.Main) { onConfirmed() }
                 }
-                SystemUnlockResult.DeviceLocked -> _state.value = ReauthState(locked = true)
+                SystemUnlockResult.DeviceLocked -> _state.value = AuthState(locked = true)
                 SystemUnlockResult.Invalidated -> {
                     app.session.lock(); app.vault.refresh()
                     withContext(Dispatchers.Main) { onForcedMaster() }
                 }
-                is SystemUnlockResult.Failed -> _state.value = ReauthState(message = r.message)
+                is SystemUnlockResult.Failed -> _state.value = AuthState(message = r.message)
             }
         }
     }

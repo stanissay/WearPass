@@ -22,7 +22,6 @@ import stanissay.wear.pass.utils.PageTitle
 @Composable
 fun SystemSetupScreen(
     onDone: () -> Unit,
-    onCancel: () -> Unit,
     vm: SystemSetupViewModel = viewModel(),
 ) {
     val context = LocalContext.current
@@ -46,7 +45,5 @@ fun SystemSetupScreen(
                 ) { MainText(stringResource(R.string.on)) }
             }
         } else item { MainText(stringResource(R.string.create_pin)) }
-
-        item { ClickableListItem(onClick = onCancel) { MainText(stringResource(R.string.cancel)) } }
     }
 }

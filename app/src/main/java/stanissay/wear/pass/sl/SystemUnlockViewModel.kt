@@ -14,34 +14,39 @@ class SystemUnlockViewModel(application: Application) : AndroidViewModel(applica
     private val app = getApplication<App>()
     private val _state = MutableStateFlow(SystemUnlockState())
     val state = _state.asStateFlow()
+    private var running = false
 
     fun tryUnlock(onUnlocked: () -> Unit, onForcedMaster: () -> Unit) {
-        if (_state.value.busy) return
+        if (running) return
+        running = true
         _state.value = SystemUnlockState(busy = true)
         viewModelScope.launch(Dispatchers.Default) {
-            when (val r = app.systemVault.unlock()) {
-                is SystemUnlockResult.Success -> {
-                    val opened = runCatching { app.vault.openSyncing(String(r.password)) }
-                    r.password.fill('\u0000')
-                    opened.fold(
-                        onSuccess = { o ->
-                            app.session.open(o.db, sync = o.sync)
-                            _state.value = SystemUnlockState()
-                            withContext(Dispatchers.Main) { onUnlocked() }
-                        },
-                        onFailure = {
-                            app.systemVault.wipe(); app.vault.refresh()
-                            withContext(Dispatchers.Main) { onForcedMaster() }
-                        },
-                    )
+            try {
+                when (val r = app.systemVault.unlock()) {
+                    is SystemUnlockResult.Success -> {
+                        val opened = runCatching { app.vault.openSyncing(String(r.password)) }
+                        r.password.fill('\u0000')
+                        opened.fold(
+                            onSuccess = { o ->
+                                app.session.open(o.db, sync = o.sync)
+                                withContext(Dispatchers.Main) { onUnlocked() }
+                            },
+                            onFailure = {
+                                app.systemVault.wipe(); app.vault.refresh()
+                                withContext(Dispatchers.Main) { onForcedMaster() }
+                            },
+                        )
+                    }
+                    SystemUnlockResult.DeviceLocked ->
+                        _state.value = SystemUnlockState(busy = false, locked = true)
+                    SystemUnlockResult.Invalidated -> {
+                        app.vault.refresh()
+                        withContext(Dispatchers.Main) { onForcedMaster() }
+                    }
+                    is SystemUnlockResult.Failed ->
+                        _state.value = SystemUnlockState(busy = false, message = r.message)
                 }
-                SystemUnlockResult.DeviceLocked -> _state.value = SystemUnlockState(locked = true)
-                SystemUnlockResult.Invalidated -> {
-                    app.vault.refresh()
-                    withContext(Dispatchers.Main) { onForcedMaster() }
-                }
-                is SystemUnlockResult.Failed -> _state.value = SystemUnlockState(message = r.message)
-            }
+            } finally { running = false }
         }
     }
 }
