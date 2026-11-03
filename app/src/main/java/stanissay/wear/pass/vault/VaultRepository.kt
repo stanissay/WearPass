@@ -22,6 +22,8 @@ class VaultRepository(private val context: Context) {
     val status = _status.asStateFlow()
     val pinBlobFile get() = File(dir, "pin.blob")
     val pinMetaFile get() = File(dir, "pin.meta")
+    val safeBlobFile get() = File(dir, "safe.blob")
+    val safeMetaFile get() = File(dir, "safe.meta")
     val systemBlobFile get() = File(dir, "system.blob")
     private val sourcePathFile get() = File(dir, "source.path")
     val sourcePath: String?
@@ -43,7 +45,8 @@ class VaultRepository(private val context: Context) {
                 if (pinBlobFile.exists()) VaultStatus.PinLocked else VaultStatus.NeedsMasterPassword
             UnlockMethod.SystemLock ->
                 if (systemBlobFile.exists()) VaultStatus.SystemLocked else VaultStatus.NeedsMasterPassword
-            UnlockMethod.Safe -> VaultStatus.NeedsMasterPassword // TODO: коли буде сейф
+            UnlockMethod.Safe ->
+                if (safeBlobFile.exists()) VaultStatus.SafeLocked else VaultStatus.NeedsMasterPassword
         }
     }
 
@@ -57,6 +60,8 @@ class VaultRepository(private val context: Context) {
             check(hasKdbxSignature(tmp)) { context.getString(R.string.incorrect_file) }
             pinBlobFile.delete()
             pinMetaFile.delete()
+            safeBlobFile.delete()
+            safeMetaFile.delete()
             systemBlobFile.delete()
             methodFile.delete()
             writeAtomic(sourcePathFile, source.absolutePath.toByteArray())

@@ -8,7 +8,7 @@ import app.keemobile.kotpass.database.KeePassDatabase
 import java.util.Locale
 import java.util.concurrent.ConcurrentHashMap
 
-enum class VaultStatus { NotImported, NeedsMasterPassword, PinLocked, SystemLocked }
+enum class VaultStatus { NotImported, NeedsMasterPassword, PinLocked, SafeLocked, SystemLocked }
 
 data class IconRef(val customId: String? = null, val builtIn: Int? = null)
 

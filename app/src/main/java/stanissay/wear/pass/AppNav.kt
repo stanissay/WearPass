@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -32,16 +31,16 @@ import stanissay.wear.pass.settings.SettingsScreen
 import stanissay.wear.pass.settings.UnlockMethod
 import stanissay.wear.pass.sl.SystemSetupScreen
 import stanissay.wear.pass.sl.SystemUnlockScreen
+import stanissay.wear.pass.utils.AuthKey
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.EntryKey
 import stanissay.wear.pass.utils.FileBrowserKey
 import stanissay.wear.pass.utils.GroupKey
-import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.MasterPasswordKey
 import stanissay.wear.pass.utils.PinSetupKey
 import stanissay.wear.pass.utils.PinUnlockKey
-import stanissay.wear.pass.utils.AuthKey
 import stanissay.wear.pass.utils.SafeSetupKey
+import stanissay.wear.pass.utils.SafeUnlockKey
 import stanissay.wear.pass.utils.SettingsKey
 import stanissay.wear.pass.utils.SystemSetupKey
 import stanissay.wear.pass.utils.SystemUnlockKey
@@ -92,12 +91,14 @@ fun AppNav(vault: VaultRepository) {
                     DisposableEffect(Unit) { onDispose { session.clearPendingPassword() } }
                     Guarded(session.isUnlocked, relock) {
                         PinSetupScreen(
+                            method = UnlockMethod.Pin,
                             onDone = { backStack.clear(); backStack.add(GroupKey()) }
                         )
                     }
                 }
                 entry<PinUnlockKey> {
                     PinUnlockScreen(
+                        method = UnlockMethod.Pin,
                         onUnlocked = { backStack.clear(); backStack.add(GroupKey()) },
                         onForcedMaster = { backStack.clear(); backStack.add(MasterPasswordKey) }
                     )
@@ -130,7 +131,22 @@ fun AppNav(vault: VaultRepository) {
                         )
                     }
                 }
-                entry<SafeSetupKey> { Stub("Створи сейф") }
+                entry<SafeSetupKey> {
+                    DisposableEffect(Unit) { onDispose { session.clearPendingPassword() } }
+                    Guarded(session.isUnlocked, relock) {
+                        PinSetupScreen(
+                            method = UnlockMethod.Safe,
+                            onDone = { backStack.clear(); backStack.add(GroupKey()) }
+                        )
+                    }
+                }
+                entry<SafeUnlockKey> {
+                    PinUnlockScreen(
+                        method = UnlockMethod.Safe,
+                        onUnlocked = { backStack.clear(); backStack.add(GroupKey()) },
+                        onForcedMaster = { backStack.clear(); backStack.add(MasterPasswordKey) }
+                    )
+                }
                 entry<SystemSetupKey> {
                     DisposableEffect(Unit) { onDispose { session.clearPendingPassword() } }
                     Guarded(session.isUnlocked, relock) {
@@ -148,8 +164,6 @@ fun AppNav(vault: VaultRepository) {
     }
 }
 
-@Composable private fun Stub(title: String) = Box(Modifier.fillMaxSize(), Alignment.Center) { MainText(title) }
-
 fun setupKeyFor(m: UnlockMethod): NavKey = when (m) {
     UnlockMethod.Pin -> PinSetupKey
     UnlockMethod.Safe -> SafeSetupKey
@@ -160,6 +174,7 @@ fun startKey(vault: VaultRepository): NavKey = when (vault.status.value) {
     VaultStatus.NotImported -> FileBrowserKey
     VaultStatus.NeedsMasterPassword -> MasterPasswordKey
     VaultStatus.PinLocked -> PinUnlockKey
+    VaultStatus.SafeLocked -> SafeUnlockKey
     VaultStatus.SystemLocked -> SystemUnlockKey
 }
 

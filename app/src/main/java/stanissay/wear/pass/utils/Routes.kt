@@ -13,5 +13,6 @@ import stanissay.wear.pass.settings.UnlockMethod
 @Serializable data object SettingsKey : NavKey
 @Serializable data class AuthKey(val target: UnlockMethod) : NavKey
 @Serializable data object SafeSetupKey : NavKey
+@Serializable data object SafeUnlockKey : NavKey
 @Serializable data object SystemSetupKey : NavKey
 @Serializable data object SystemUnlockKey : NavKey

@@ -16,6 +16,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import stanissay.wear.pass.settings.UnlockMethod
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
@@ -94,3 +95,5 @@ fun sha256(f: File): ByteArray {
 }
 
 fun NavKey.requiresUnlock() = this is GroupKey || this is EntryKey || this is AuthKey || this is PinSetupKey || this is SafeSetupKey || this is SystemSetupKey
+
+fun codeLength(method: UnlockMethod) = if (method == UnlockMethod.Pin) DataConstants.PIN_LENGTH else DataConstants.SAFE_LENGTH

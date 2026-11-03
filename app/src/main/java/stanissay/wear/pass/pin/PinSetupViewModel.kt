@@ -17,12 +17,11 @@ import stanissay.wear.pass.settings.UnlockMethod
 class PinSetupViewModel(application: Application) : AndroidViewModel(application) {
     private val app = getApplication<App>()
     private val session = app.session
-    private val pinVault = app.pinVault
     private val _state = MutableStateFlow(PinSetupState())
     val state = _state.asStateFlow()
     private var first: CharArray? = null
 
-    fun onPin(pin: CharArray, onDone: () -> Unit) {
+    fun onPin(method: UnlockMethod, pin: CharArray, onDone: () -> Unit) {
         val s = _state.value
         if (s.saving) return
 
@@ -41,13 +40,13 @@ class PinSetupViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch(Dispatchers.Default) {
             val password = session.consumePassword()
             val result = runCatching {
-                pinVault.setup(pin, requireNotNull(password) { application.getString(R.string.session_expired) })
+                app.codeVault(method).setup(pin, requireNotNull(password) { application.getString(R.string.session_expired) })
             }
             password?.fill('\u0000'); pin.fill('\u0000')
             first?.fill('\u0000'); first = null
             result.fold(
                 onSuccess = {
-                    app.commitMethod(UnlockMethod.Pin)
+                    app.commitMethod(method)
                     withContext(Dispatchers.Main) { onDone() }
                 },
                 onFailure = { e ->

@@ -12,20 +12,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
+import stanissay.wear.pass.settings.UnlockMethod
 
 class PinUnlockViewModel(application: Application) : AndroidViewModel(application) {
     private val app = getApplication<App>()
     private val vault = app.vault
     private val session = app.session
-    private val pinVault = app.pinVault
     private val _state = MutableStateFlow(PinUnlockState())
     val state = _state.asStateFlow()
 
-    fun onPin(pin: CharArray, onUnlocked: () -> Unit, onForcedMaster: () -> Unit) {
+    fun onPin(method: UnlockMethod, pin: CharArray, onUnlocked: () -> Unit, onForcedMaster: () -> Unit) {
         if (_state.value.busy) return
         _state.update { it.copy(busy = true, error = null) }
         viewModelScope.launch(Dispatchers.Default) {
-            val result = runCatching { pinVault.unlock(pin) }
+            val result = runCatching { app.codeVault(method).unlock(pin) }
             pin.fill('\u0000')
             result.fold(
                 onSuccess = { r ->
@@ -40,7 +40,7 @@ class PinUnlockViewModel(application: Application) : AndroidViewModel(applicatio
                                     withContext(Dispatchers.Main) { onUnlocked() }
                                 },
                                 onFailure = { e ->
-                                    pinVault.wipe()
+                                    app.codeVault(method).wipe()
                                     vault.refresh()
                                     onForcedMaster()
                                     fail(e.message ?: application.getString(R.string.error))

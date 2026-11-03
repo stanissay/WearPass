@@ -10,7 +10,7 @@ import stanissay.wear.pass.R
 import stanissay.wear.pass.pin.PinPad
 import stanissay.wear.pass.settings.UnlockMethod
 import stanissay.wear.pass.sl.SystemPrompt
-import stanissay.wear.pass.utils.MainText
+import stanissay.wear.pass.utils.DataConstants
 
 @Composable
 fun AuthScreen(
@@ -38,6 +38,13 @@ fun AuthScreen(
                 onRetry = { viewModel.confirmSystem(onConfirmed, onForcedMaster) },
             )
         }
-        UnlockMethod.Safe -> MainText("Сейф ще не реалізований")
+        UnlockMethod.Safe -> PinPad(
+            title = stringResource(R.string.confirm_safe),
+            length = DataConstants.SAFE_LENGTH,
+            subtitle = state.message,
+            enabled = !state.busy,
+            resetKey = state.resetKey,
+            onComplete = { viewModel.confirmPin(it, onConfirmed, onForcedMaster) }
+        )
     }
 }

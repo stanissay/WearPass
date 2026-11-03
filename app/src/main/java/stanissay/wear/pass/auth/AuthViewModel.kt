@@ -25,7 +25,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         if (_state.value.busy) return
         _state.update { it.copy(busy = true, message = null) }
         viewModelScope.launch(Dispatchers.Default) {
-            val result = runCatching { app.pinVault.unlock(pin) }
+            val result = runCatching { app.codeVault(method).unlock(pin) }
             pin.fill('\u0000')
             result.fold(
                 onSuccess = { r ->

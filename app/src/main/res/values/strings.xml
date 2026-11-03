@@ -21,6 +21,8 @@
     <string name="pin_type">PIN type</string>
     <string name="classic_pin">Classic PIN</string>
     <string name="safe">Safe</string>
+    <string name="create_safe">Create safe</string>
+    <string name="confirm_safe">Confirm safe</string>
     <string name="lock_now">Lock now</string>
     <string name="attempts">Incorrect PIN. Attempts:</string>
     <string name="session_expired">Session expired</string>

@@ -20,13 +20,13 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-class KeystorePinVault(private val blobFile: File, private val metaFile: File) : PinVault {
+class KeystorePinVault(private val blobFile: File, private val metaFile: File, private val alias: String) : PinVault {
     override suspend fun setup(pin: CharArray, password: CharArray) = withContext(Dispatchers.Default) { doSetup(pin, password) }
     override suspend fun unlock(pin: CharArray): PinResult = withContext(Dispatchers.Default) { doUnlock(pin) }
     override fun wipe() {
         blobFile.delete()
         metaFile.delete()
-        runCatching { keyStore().deleteEntry(DataConstants.PIN_ALIAS) }
+        runCatching { keyStore().deleteEntry(alias) }
     }
 
     private fun doSetup(pin: CharArray, password: CharArray) {
@@ -103,10 +103,10 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File) :
 
     private fun createKeystoreKey(): SecretKey {
         val ks = keyStore()
-        if (ks.containsAlias(DataConstants.PIN_ALIAS)) ks.deleteEntry(DataConstants.PIN_ALIAS)
+        if (ks.containsAlias(alias)) ks.deleteEntry(alias)
         val gen = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, DataConstants.ANDROID_KEY_STORE)
         gen.init(
-            KeyGenParameterSpec.Builder(DataConstants.PIN_ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            KeyGenParameterSpec.Builder(alias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                 .setKeySize(256)
@@ -115,7 +115,7 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File) :
         return gen.generateKey()
     }
 
-    private fun loadKeystoreKey(): SecretKey? = keyStore().getKey(DataConstants.PIN_ALIAS, null) as? SecretKey
+    private fun loadKeystoreKey(): SecretKey? = keyStore().getKey(alias, null) as? SecretKey
 
     private fun readAttempts(): Int? = metaFile.takeIf { it.exists() }?.readText()?.trim()?.toIntOrNull()
 
