@@ -1,14 +1,10 @@
 package stanissay.wear.pass.pin
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,15 +12,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.wear.compose.material3.MaterialTheme
-import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants
-import stanissay.wear.pass.utils.UiConstants
-import stanissay.wear.pass.utils.MainText
+import stanissay.wear.pass.utils.KeyButton
+import stanissay.wear.pass.utils.MainCheckBox
 import stanissay.wear.pass.utils.PaddingStyle
-import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.PageTitle
+import stanissay.wear.pass.utils.SubTitle
+import stanissay.wear.pass.utils.UiConstants
 
 @Composable
 fun PinPad(
@@ -32,8 +26,7 @@ fun PinPad(
     subtitle: String? = null,
     enabled: Boolean = true,
     resetKey: Any = Unit,
-    onComplete: (CharArray) -> Unit,
-    onSettings: () -> Unit
+    onComplete: (CharArray) -> Unit
 ) {
     var digits by remember(resetKey) { mutableStateOf("") }
 
@@ -56,14 +49,7 @@ fun PinPad(
             horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
         ) {
             repeat(DataConstants.PIN_LENGTH) { i ->
-                Box(
-                    modifier = Modifier.size(UiConstants.BASE_SIZE_XXS)
-                        .clip(CircleShape)
-                        .background(
-                            if (i < digits.length) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.surfaceContainer
-                        )
-                )
+                MainCheckBox(check = i < digits.length)
             }
         }
 
@@ -74,20 +60,10 @@ fun PinPad(
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)) {
-                KeyButton("⚙") { onSettings() }
+                KeyButton("") {}
                 KeyButton("0") { press('0') }
                 KeyButton("⌫") { digits = digits.dropLast(1) }
             }
         }
     }
-}
-
-@Composable
-private fun KeyButton(label: String, onClick: () -> Unit) {
-    ClickableBox(
-        modifier = Modifier.size(UiConstants.BUTTON_SIZE),
-        shape = CircleShape,
-        borderColor = MaterialTheme.colorScheme.outline,
-        onClick = onClick
-    ) { MainText(label) }
 }

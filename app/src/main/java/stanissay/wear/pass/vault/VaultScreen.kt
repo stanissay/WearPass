@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -37,7 +36,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
-import stanissay.wear.pass.utils.ClickableBox
+import stanissay.wear.pass.utils.ClickableListItem
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PaddingStyle
@@ -55,13 +54,7 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
         view?.let { v ->
             item { ListHeader { PageTitle(view.name) } }
             items(v.groups, key = { "g-${it.id}" }) { g ->
-                ClickableBox(
-                    onClick = { onGroup(g.id) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(UiConstants.BASE_SIZE),
-                    borderColor = MaterialTheme.colorScheme.outline
-                ) {
+                ClickableListItem(onClick = { onGroup(g.id) }) {
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
@@ -76,13 +69,7 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
                 }
             }
             items(v.entries, key = { "e-${it.id}" }) { e ->
-                ClickableBox(
-                    onClick = { onEntry(e.id) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(UiConstants.BASE_SIZE),
-                    borderColor = MaterialTheme.colorScheme.outline
-                ) {
+                ClickableListItem(onClick = { onEntry(e.id) }) {
                     Row(
                         modifier = Modifier
                             .fillMaxSize()
@@ -125,15 +112,8 @@ fun EntryScreen(entryId: String) {
             item { ListHeader { PageTitle(e.title) } }
             if (e.userName.isNotEmpty()) item { Field(stringResource(R.string.login), e.userName) }
             item {
-                ClickableBox(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(UiConstants.BASE_SIZE),
-                    borderColor = MaterialTheme.colorScheme.outline,
-                    onClick = { password = if (password == null) session.index?.password(entryId) else null }
-                ) {
-                    password?.let { p -> MainText(p, style = MaterialTheme.typography.bodyLarge) }
-                        ?: MainText(stringResource(R.string.show_password))
+                ClickableListItem(onClick = { password = if (password == null) session.index?.password(entryId) else null }) {
+                    password?.let { p -> MainText(p, style = MaterialTheme.typography.bodyLarge) } ?: MainText(stringResource(R.string.show_password))
                 }
             }
             if (e.url.isNotEmpty()) item { Field(stringResource(R.string.URL), e.url) }

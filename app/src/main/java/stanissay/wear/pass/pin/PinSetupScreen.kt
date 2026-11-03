@@ -10,7 +10,6 @@ import stanissay.wear.pass.R
 @Composable
 fun PinSetupScreen(
     onDone: () -> Unit,
-    onSettings: () -> Unit,
     viewModel: PinSetupViewModel = viewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -19,7 +18,6 @@ fun PinSetupScreen(
         subtitle = state.error,
         enabled = !state.saving,
         resetKey = state.resetKey,
-        onComplete = { viewModel.onPin(it, onDone) },
-        onSettings = onSettings
+        onComplete = { viewModel.onPin(it, onDone) }
     )
 }

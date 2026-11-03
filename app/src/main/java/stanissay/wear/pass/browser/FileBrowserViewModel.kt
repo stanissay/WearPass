@@ -22,7 +22,6 @@ import java.io.File
 class FileBrowserViewModel(application: Application) : AndroidViewModel(application) {
     private val app = getApplication<App>()
     private val vault = app.vault
-    private val pinVault = app.pinVault
     private val session = app.session
     private val root: File = Environment.getExternalStorageDirectory()
     private val _state = MutableStateFlow(BrowserUiState(dir = root))
@@ -78,7 +77,7 @@ class FileBrowserViewModel(application: Application) : AndroidViewModel(applicat
                 )
             }
             if (result.isSuccess) {
-                pinVault.wipe()
+                app.wipeUnlockSecrets()
                 session.lock()
                 withContext(Dispatchers.Main) { onDone() }
             }

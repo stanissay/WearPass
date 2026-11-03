@@ -31,6 +31,11 @@ class VaultSession {
 
     fun consumePassword(): CharArray? = pendingPassword.also { pendingPassword = null }
 
+    fun clearPendingPassword() {
+        pendingPassword?.fill('\u0000')
+        pendingPassword = null
+    }
+
     fun stashPassword(password: CharArray) {
         pendingPassword?.fill('\u0000')
         pendingPassword = password

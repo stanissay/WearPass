@@ -22,6 +22,7 @@ class VaultRepository(private val context: Context) {
     val status = _status.asStateFlow()
     val pinBlobFile get() = File(dir, "pin.blob")
     val pinMetaFile get() = File(dir, "pin.meta")
+    val systemBlobFile get() = File(dir, "system.blob")
     private val sourcePathFile get() = File(dir, "source.path")
     val sourcePath: String?
         get() = sourcePathFile.takeIf { it.exists() }?.readText()?.trim()?.ifEmpty { null }
@@ -35,10 +36,15 @@ class VaultRepository(private val context: Context) {
     private fun credentials(password: String) =
         Credentials.from(EncryptedValue.fromString(password))
 
-    private fun compute() = when {
-        !dbFile.exists() -> VaultStatus.NotImported
-        !pinBlobFile.exists() -> VaultStatus.NeedsMasterPassword
-        else -> VaultStatus.PinLocked
+    private fun compute(): VaultStatus {
+        if (!dbFile.exists()) return VaultStatus.NotImported
+        return when (unlockMethod) {
+            UnlockMethod.Pin ->
+                if (pinBlobFile.exists()) VaultStatus.PinLocked else VaultStatus.NeedsMasterPassword
+            UnlockMethod.SystemLock ->
+                if (systemBlobFile.exists()) VaultStatus.SystemLocked else VaultStatus.NeedsMasterPassword
+            UnlockMethod.Safe -> VaultStatus.NeedsMasterPassword // TODO: коли буде сейф
+        }
     }
 
     fun refresh() { _status.value = compute() }
@@ -51,6 +57,8 @@ class VaultRepository(private val context: Context) {
             check(hasKdbxSignature(tmp)) { context.getString(R.string.incorrect_file) }
             pinBlobFile.delete()
             pinMetaFile.delete()
+            systemBlobFile.delete()
+            methodFile.delete()
             writeAtomic(sourcePathFile, source.absolutePath.toByteArray())
             check(tmp.renameTo(dbFile)) { context.getString(R.string.error) }
         } finally {

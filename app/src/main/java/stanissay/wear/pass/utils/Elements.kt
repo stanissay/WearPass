@@ -7,17 +7,17 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
@@ -70,33 +70,6 @@ fun CircularBar() {
             )
         )
     }
-}
-
-@Composable
-fun MainCard(
-    modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.background,
-    borderColor: Color = MainColors.TRANSPARENT,
-    contentPadding: PaddingValues = PaddingStyle.none,
-    containerPadding: PaddingValues = PaddingStyle.none,
-    shape: Shape = ShapesStyle.medium,
-    content: @Composable () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .padding(containerPadding)
-            .shadow(
-                elevation = UiConstants.ELEVATION,
-                shape = shape
-            )
-            .clip(shape)
-            .background(containerColor)
-            .border(
-                width = UiConstants.THICKNESS,
-                color = borderColor,
-                shape = shape
-            )
-    ) { Box(modifier = Modifier.padding(contentPadding)) { content() } }
 }
 
 @Composable
@@ -185,6 +158,29 @@ fun ClickableBox(
 }
 
 @Composable
+fun ClickableListItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    content: @Composable BoxScope.() -> Unit
+) {
+    ClickableBox(
+        modifier = modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+        borderColor = MaterialTheme.colorScheme.outline,
+        onClick = onClick
+    ) { content() }
+}
+
+@Composable
+fun KeyButton(label: String, onClick: () -> Unit) {
+    ClickableBox(
+        modifier = Modifier.size(UiConstants.BUTTON_SIZE),
+        shape = CircleShape,
+        borderColor = MaterialTheme.colorScheme.outline,
+        onClick = onClick
+    ) { MainText(label) }
+}
+
+@Composable
 fun MainText(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
@@ -270,7 +266,18 @@ fun SubTitle(
 fun MainDivider() {
     Box(
         modifier = Modifier.fillMaxWidth().height(UiConstants.THICKNESS)
-            .padding(horizontal = UiConstants.MAIN_PADDING)
             .background(MaterialTheme.colorScheme.outline)
+    )
+}
+
+@Composable
+fun MainCheckBox(check: Boolean) {
+    Box(
+        modifier = Modifier.size(UiConstants.BASE_SIZE_XXS)
+            .clip(CircleShape)
+            .background(
+                if (check) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.surfaceContainer
+            )
     )
 }

@@ -29,6 +29,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.ClickableBox
+import stanissay.wear.pass.utils.ClickableListItem
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
@@ -71,10 +72,9 @@ fun MasterPasswordScreen(onOpened: () -> Unit, viewModel: MasterViewModel = view
             )
         }
         item {
-            ClickableBox(
-                modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+            ClickableListItem(
                 onClick = {
-                    if(working) return@ClickableBox
+                    if(working) return@ClickableListItem
                     viewModel.unlock(field.text.toString(), onOpened)
                 }
             ) { MainText(stringResource(R.string.open)) }

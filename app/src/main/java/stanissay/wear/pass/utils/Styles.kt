@@ -20,6 +20,7 @@ object MainColors {
     val GRAY = Color(0xFF686D73)
     val BORDER = Color(0xFF242629)
     val TRANSPARENT = Color(0x00000000)
+    val NEGATIVE = Color(0xFF6C0808)
 }
 
 val TypographyStyle = Typography(
@@ -77,14 +78,9 @@ object UiConstants {
 
     val BUTTON_SIZE_S = 16.dp
     val BUTTON_SIZE = 32.dp
-    val BUTTON_SIZE_L = 36.dp
 
-    val NULL_PADDING = 0.dp
-    val MAIN_PADDING = 8.dp
     val SPACE = 4.dp
-
     val THICKNESS = 1.dp
-    val ELEVATION = 8.dp
 }
 
 object PaddingStyle {

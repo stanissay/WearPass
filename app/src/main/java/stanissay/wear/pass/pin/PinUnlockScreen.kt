@@ -11,7 +11,6 @@ import stanissay.wear.pass.R
 fun PinUnlockScreen(
     onUnlocked: () -> Unit,
     onForcedMaster: () -> Unit,
-    onSettings: () -> Unit,
     viewModel: PinUnlockViewModel = viewModel(),
 ) {
     val state by viewModel.state.collectAsState()
@@ -20,7 +19,6 @@ fun PinUnlockScreen(
         subtitle = state.error,
         enabled = !state.busy,
         resetKey = state.resetKey,
-        onComplete = { viewModel.onPin(it, onUnlocked, onForcedMaster) },
-        onSettings = onSettings
+        onComplete = { viewModel.onPin(it, onUnlocked, onForcedMaster) }
     )
 }

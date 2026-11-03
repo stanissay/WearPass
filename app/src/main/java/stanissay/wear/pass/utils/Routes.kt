@@ -11,6 +11,7 @@ import stanissay.wear.pass.settings.UnlockMethod
 @Serializable data class GroupKey(val groupUuid: String? = null) : NavKey
 @Serializable data class EntryKey(val entryUuid: String) : NavKey
 @Serializable data object SettingsKey : NavKey
-@Serializable data class ReauthKey(val target: UnlockMethod) : NavKey
+@Serializable data class AuthKey(val target: UnlockMethod) : NavKey
 @Serializable data object SafeSetupKey : NavKey
 @Serializable data object SystemSetupKey : NavKey
+@Serializable data object SystemUnlockKey : NavKey

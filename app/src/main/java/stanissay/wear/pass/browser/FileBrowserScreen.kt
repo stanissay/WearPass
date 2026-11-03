@@ -30,6 +30,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.ClickableBox
+import stanissay.wear.pass.utils.ClickableListItem
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.UiConstants
 import stanissay.wear.pass.utils.MainText
@@ -62,20 +63,12 @@ fun FileBrowserScreen(onImported: () -> Unit) {
         }
 
         if (viewModel.canGoUp)
-            item {
-                ClickableBox(
-                    modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
-                    borderColor = MaterialTheme.colorScheme.outline,
-                    onClick = viewModel::up
-                ) { MainText(DataConstants.BROWSER_UP) }
-            }
+            item { ClickableListItem(onClick = viewModel::up) { MainText(DataConstants.BROWSER_UP) } }
 
         items(state.items, key = { it.absolutePath }) { f ->
-            ClickableBox(
-                modifier = Modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
-                borderColor = MaterialTheme.colorScheme.outline,
+            ClickableListItem(
                 onClick = {
-                    if(state.mode == BrowserMode.Importing) return@ClickableBox
+                    if(state.mode == BrowserMode.Importing) return@ClickableListItem
                     if (f.isDirectory) viewModel.open(f) else viewModel.import(f, onImported)
                 }
             ) {

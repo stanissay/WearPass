@@ -6,29 +6,26 @@
     <string name="data">Data</string>
     <string name="import_new_file">Import</string>
     <string name="incorrect_file">Incorrect file</string>
-    <string name="current">Current:</string>
-    <string name="change_base">Change database</string>
     <string name="open">Open</string>
 
     <string name="master_password">Master password</string>
     <string name="pin" translatable="false">PIN</string>
-    <string name="pin_safe">PIN or Safe</string>
     <string name="system_lock">System lock</string>
+    <string name="unlocking">Unlocking</string>
+    <string name="confirming">Confirming</string>
+    <string name="unlock_watch">Unlock watch</string>
     <string name="create_pin">Create PIN</string>
     <string name="confirm_pin">Confirm PIN</string>
     <string name="incorrect_pin">Incorrect PIN</string>
     <string name="lock_type">Lock type</string>
     <string name="pin_type">PIN type</string>
     <string name="classic_pin">Classic PIN</string>
-    <string name="classic_pin_description">4 digits</string>
     <string name="safe">Safe</string>
-    <string name="safe_description">6 digits</string>
     <string name="lock_now">Lock now</string>
     <string name="attempts">Incorrect PIN. Attempts:</string>
     <string name="session_expired">Session expired</string>
     <string name="setup_lock">Set up screen lock</string>
-    <string name="while_unlocked">While the watch is unlocked</string>
-    <string name="base_locked">Database is locked: the unlock method can only be changed after unlock database</string>
+    <string name="vault_locked">Vault is locked</string>
 
     <string name="unnamed">(unnamed)</string>
     <string name="no_entry">No entry</string>
@@ -39,8 +36,8 @@
     <string name="URL" translatable="false">URL</string>
     <string name="show_password">Show password</string>
 
-    <string name="delete_all">Delete all</string>
-    <string name="delete_question">Delete database?</string>
+    <string name="delete_question">Delete vault?</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="on">On</string>
 </resources>
