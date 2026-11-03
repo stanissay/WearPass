@@ -3,6 +3,7 @@ package stanissay.wear.pass.utils
 import androidx.compose.ui.unit.dp
 
 object DataConstants {
+    const val AUTO_LOCK_MS = 30_000L
     const val KDBX = "kdbx"
     const val KDBX_MAX_SIZE = 64L * 1024 * 1024
     val KDBX_SIGNATURE = byteArrayOf(

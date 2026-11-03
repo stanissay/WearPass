@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -44,6 +45,7 @@ import stanissay.wear.pass.utils.SafeSetupKey
 import stanissay.wear.pass.utils.SettingsKey
 import stanissay.wear.pass.utils.SystemSetupKey
 import stanissay.wear.pass.utils.SystemUnlockKey
+import stanissay.wear.pass.utils.requiresUnlock
 import stanissay.wear.pass.vault.EntryScreen
 import stanissay.wear.pass.vault.GroupScreen
 import stanissay.wear.pass.vault.VaultRepository
@@ -57,6 +59,13 @@ fun AppNav(vault: VaultRepository) {
     val relock: () -> Unit = { backStack.clear(); backStack.add(startKey(vault)) }
     val openSettings: () -> Unit = {
         if (backStack.lastOrNull() != SettingsKey) backStack.add(SettingsKey)
+    }
+    val unlocked by session.unlocked.collectAsState()
+    val needsRelock = !unlocked && backStack.any { it.requiresUnlock() }
+    LaunchedEffect(needsRelock) { if (needsRelock) relock() }
+    if (needsRelock) {
+        Box(Modifier.fillMaxSize())
+        return
     }
 
     SwipeLeftToOpen(onSwipe = openSettings) {
