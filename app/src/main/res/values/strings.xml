@@ -11,4 +11,15 @@
     <string name="incorrect_pin">Incorrect PIN</string>
     <string name="attempts">Incorrect PIN. Attempts:</string>
     <string name="session_expired">Session expired</string>
+    <string name="sync_updated">Database updated from file</string>
+    <string name="sync_source_missing">Source file not found. Using saved copy</string>
+    <string name="sync_source_unreadable">Unable to read source file. Using saved copy</string>
+    <string name="unnamed">(unnamed)</string>
+    <string name="no_entry">No entry</string>
+    <string name="no_group">No group</string>
+    <string name="empty">Empty</string>
+    <string name="login">Login</string>
+    <string name="notes">Notes</string>
+    <string name="URL" translatable="false">URL</string>
+    <string name="show_password">Show password</string>
 </resources>

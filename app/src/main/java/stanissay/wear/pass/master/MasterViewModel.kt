@@ -23,9 +23,9 @@ class MasterViewModel(application: Application) : AndroidViewModel(application) 
         if (password.isEmpty() || _state.value is UnlockState.Working) return
         _state.value = UnlockState.Working
         viewModelScope.launch(Dispatchers.Default) {
-            runCatching { vault.openDatabase(password) }.fold(
-                onSuccess = { db ->
-                    session.open(db, password.toCharArray())
+            runCatching { vault.openSyncing(password) }.fold(
+                onSuccess = { r ->
+                    session.open(r.db, password.toCharArray(), r.sync)
                     _state.value = UnlockState.Idle
                     withContext(Dispatchers.Main) { onOpened() }
                 },

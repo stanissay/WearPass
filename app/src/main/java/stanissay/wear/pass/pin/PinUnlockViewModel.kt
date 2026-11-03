@@ -33,11 +33,11 @@ class PinUnlockViewModel(application: Application) : AndroidViewModel(applicatio
                 onSuccess = { r ->
                     when (r) {
                         is PinResult.Success -> {
-                            val opened = runCatching { vault.openDatabase(String(r.password)) }
+                            val opened = runCatching { vault.openSyncing(String(r.password)) }
                             r.password.fill('\u0000')
                             opened.fold(
-                                onSuccess = { db ->
-                                    session.open(db)
+                                onSuccess = { o ->
+                                    session.open(o.db, sync = o.sync)
                                     _state.update { it.copy(busy = false) }
                                     withContext(Dispatchers.Main) { onUnlocked() }
                                 },

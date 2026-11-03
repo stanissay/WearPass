@@ -19,6 +19,7 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
 import java.security.KeyStore
+import java.security.MessageDigest
 
 sealed class UiEvent {
     data class ShowToast(val message: String) : UiEvent()
@@ -77,3 +78,16 @@ fun writeAtomic(target: File, bytes: ByteArray) {
 }
 
 fun keyStore() = KeyStore.getInstance(DataConstants.ANDROID_KEY_STORE).apply { load(null) }!!
+
+fun sha256(f: File): ByteArray {
+    val md = MessageDigest.getInstance("SHA-256")
+    f.inputStream().use { i ->
+        val buf = ByteArray(8192)
+        while (true) {
+            val n = i.read(buf)
+            if (n < 0) break
+            md.update(buf, 0, n)
+        }
+    }
+    return md.digest()
+}

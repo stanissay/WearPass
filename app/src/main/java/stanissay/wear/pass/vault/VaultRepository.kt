@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.sha256
+import stanissay.wear.pass.utils.writeAtomic
 import java.io.DataInputStream
 import java.io.File
 
@@ -19,6 +21,12 @@ class VaultRepository(private val context: Context) {
     val status = _status.asStateFlow()
     val pinBlobFile get() = File(dir, "pin.blob")
     val pinMetaFile get() = File(dir, "pin.meta")
+    private val sourcePathFile get() = File(dir, "source.path")
+    val sourcePath: String?
+        get() = sourcePathFile.takeIf { it.exists() }?.readText()?.trim()?.ifEmpty { null }
+
+    private fun credentials(password: String) =
+        Credentials.from(EncryptedValue.fromString(password))
 
     private fun compute() = when {
         !dbFile.exists() -> VaultStatus.NotImported
@@ -36,6 +44,7 @@ class VaultRepository(private val context: Context) {
             check(hasKdbxSignature(tmp)) { context.getString(R.string.incorrect_file) }
             pinBlobFile.delete()
             pinMetaFile.delete()
+            writeAtomic(sourcePathFile, source.absolutePath.toByteArray())
             check(tmp.renameTo(dbFile)) { context.getString(R.string.error) }
         } finally {
             tmp.delete()
@@ -43,9 +52,33 @@ class VaultRepository(private val context: Context) {
         refresh()
     }
 
-    fun openDatabase(password: String): KeePassDatabase {
-        val credentials = Credentials.from(EncryptedValue.fromString(password))
-        return dbFile.inputStream().use { KeePassDatabase.decode(it, credentials) }
+    fun openDatabase(password: String): KeePassDatabase =
+        dbFile.inputStream().use { KeePassDatabase.decode(it, credentials(password)) }
+
+    fun openSyncing(password: String): OpenResult {
+        val path = sourcePath ?: return OpenResult(openDatabase(password), SyncNote.None)
+        val src = File(path)
+        if (!src.isFile) return OpenResult(openDatabase(password), SyncNote.SourceMissing)
+
+        return runCatching { syncFrom(src, password) }.fold(
+            onSuccess = { s -> OpenResult(s.db ?: openDatabase(password), s.note) },
+            onFailure = { OpenResult(openDatabase(password), SyncNote.SourceUnreadable) },
+        )
+    }
+
+    private fun syncFrom(src: File, password: String): Synced {
+        require(src.length() in 1..DataConstants.KDBX_MAX_SIZE)
+        val tmp = File(dir, "db.kdbx.tmp")
+        try {
+            src.inputStream().use { i -> tmp.outputStream().use { o -> i.copyTo(o) } }
+            check(hasKdbxSignature(tmp))
+            if (sha256(tmp).contentEquals(sha256(dbFile))) return Synced(SyncNote.None, null)
+            val db = tmp.inputStream().use { KeePassDatabase.decode(it, credentials(password)) }
+            check(tmp.renameTo(dbFile))
+            return Synced(SyncNote.Updated, db)
+        } finally {
+            tmp.delete()
+        }
     }
 
     fun wipeFiles() {

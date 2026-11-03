@@ -244,7 +244,8 @@ fun PageTitle(
         modifier = modifier,
         style = MaterialTheme.typography.displayMedium,
         textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.primary
+        color = MaterialTheme.colorScheme.primary,
+        maxLines = 2
     )
 }
 
@@ -259,7 +260,8 @@ fun PageSubTitle(
         modifier = modifier,
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary,
-        textAlign = textAlign
+        textAlign = textAlign,
+        maxLines = 2
     )
 }
 

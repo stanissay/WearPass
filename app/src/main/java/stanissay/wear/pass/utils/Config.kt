@@ -20,4 +20,10 @@ object DataConstants {
     const val IV_LEN = 12
     const val PBKDF2_ITERATIONS = 200_000
     const val MAX_ATTEMPTS = 5
+    const val TITLE = "Title"
+    const val USER = "UserName"
+    const val PASSWORD = "Password"
+    const val URL = "URL"
+    const val NOTES = "Notes"
+    const val PASSWORD_VISIBLE_MS = 15_000L
 }
