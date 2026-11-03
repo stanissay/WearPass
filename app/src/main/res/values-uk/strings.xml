@@ -1,14 +1,31 @@
 <resources>
     <string name="no_access">Немає доступу до файлів. Виконай:</string>
+    <string name="settings">Налаштування</string>
+    <string name="data">Дані</string>
+    <string name="import_new_file">Імпортувати</string>
     <string name="incorrect_file">Некоректний файл</string>
     <string name="error">Помилка</string>
     <string name="master_password">Майстер-пароль</string>
+    <string name="current">Поточна:</string>
+    <string name="change_base">Змінити базу</string>
     <string name="open">Відкрити</string>
+    <string name="pin_safe">PIN чи сейф</string>
+    <string name="system_lock">Системне блокування</string>
     <string name="create_pin">Створіть PIN</string>
     <string name="confirm_pin">Підтвердіть PIN</string>
     <string name="incorrect_pin">Невірний PIN</string>
+    <string name="lock_type">Тип блокування</string>
+    <string name="pin_type">Тип PIN</string>
+    <string name="classic_pin">Класичний PIN</string>
+    <string name="classic_pin_description">4 цифри</string>
+    <string name="safe">Сейф</string>
+    <string name="safe_description">6 цифр</string>
+    <string name="lock_now">Заблокувати зараз</string>
     <string name="attempts">Невірний PIN. Спроб:</string>
     <string name="session_expired">Сесію завершено</string>
+    <string name="setup_lock">Налаштуйте блокування екрану</string>
+    <string name="while_unlocked">Доки годинник розблоковано</string>
+    <string name="base_locked">База заблокована: змінити спосіб розблокування можна лише після розблокування бази</string>
     <string name="unnamed">(без назви)</string>
     <string name="no_entry">Немає запису</string>
     <string name="no_group">Немає групи</string>
@@ -16,4 +33,8 @@
     <string name="login">Логін</string>
     <string name="notes">Нотатки</string>
     <string name="show_password">Показати пароль</string>
+    <string name="delete_all">Видалити все</string>
+    <string name="delete_question">Видалити базу?</string>
+    <string name="delete">Видалити</string>
+    <string name="cancel">Скасувати</string>
 </resources>

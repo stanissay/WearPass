@@ -134,6 +134,7 @@ fun SwipeLeftToOpen(
             .fillMaxSize()
             .pointerInput(enabled) {
                 if (!enabled) return@pointerInput
+                val threshold = DataConstants.SWIPE_THRESHOLD.toPx()
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
                     var dx = 0f
@@ -142,12 +143,14 @@ fun SwipeLeftToOpen(
                     while (true) {
                         val event = awaitPointerEvent(PointerEventPass.Initial)
                         val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                        if (fired) event.changes.forEach { it.consume() }
                         if (!change.pressed) break
                         val delta = change.position - change.previousPosition
                         dx += delta.x
                         dy += delta.y
-                        if (!fired && dx < -DataConstants.SWIPE_THRESHOLD.toPx() && abs(dx) > abs(dy) * 2f) {
+                        if (!fired && dx < -threshold && abs(dx) > abs(dy) * 2f) {
                             fired = true
+                            event.changes.forEach { it.consume() }
                             current()
                         }
                     }
