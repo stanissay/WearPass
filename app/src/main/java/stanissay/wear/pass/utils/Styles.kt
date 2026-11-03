@@ -38,6 +38,11 @@ val TypographyStyle = Typography(
         fontSize = 13.sp
     ),
 
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontSize = 12.sp
+    ),
+
     bodyMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontSize = 12.sp

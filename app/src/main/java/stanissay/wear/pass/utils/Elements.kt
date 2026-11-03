@@ -250,7 +250,7 @@ fun PageTitle(
 }
 
 @Composable
-fun PageSubTitle(
+fun SubTitle(
     text: String,
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Center
@@ -261,7 +261,8 @@ fun PageSubTitle(
         style = MaterialTheme.typography.titleMedium,
         color = MaterialTheme.colorScheme.primary,
         textAlign = textAlign,
-        maxLines = 2
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
     )
 }
 

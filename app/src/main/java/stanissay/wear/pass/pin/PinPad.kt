@@ -1,12 +1,10 @@
 package stanissay.wear.pass.pin
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,7 +23,7 @@ import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.UiConstants
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PaddingStyle
-import stanissay.wear.pass.utils.PageSubTitle
+import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.PageTitle
 
 @Composable
@@ -51,7 +49,7 @@ fun PinPad(
         verticalArrangement = Arrangement.Center
     ) {
         PageTitle(title)
-        subtitle?.let { PageSubTitle(it) }
+        subtitle?.let { SubTitle(it) }
 
         Row(
             modifier = Modifier.padding(PaddingStyle.verticalXs),
