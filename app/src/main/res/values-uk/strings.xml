@@ -1,10 +1,12 @@
 <resources>
+    <string name="version">Версія</string>
     <string name="no_access">Немає доступу до файлів. Виконай:</string>
     <string name="settings">Налаштування</string>
     <string name="data">Дані</string>
     <string name="import_new_file">Імпортувати</string>
     <string name="incorrect_file">Некоректний файл</string>
     <string name="error">Помилка</string>
+
     <string name="master_password">Майстер-пароль</string>
     <string name="open">Відкрити</string>
     <string name="system_lock">Системне блокування</string>
@@ -25,13 +27,16 @@
     <string name="session_expired">Сесію завершено</string>
     <string name="setup_lock">Налаштуйте блокування екрану</string>
     <string name="vault_locked">Сховище заблоковано</string>
+
     <string name="unnamed">(без назви)</string>
     <string name="no_entry">Немає запису</string>
     <string name="no_group">Немає групи</string>
     <string name="empty">Порожньо</string>
     <string name="login">Логін</string>
     <string name="notes">Нотатки</string>
-    <string name="show_password">Показати пароль</string>
+    <string name="attachments">Вкладення</string>
+    <string name="password">Пароль</string>
+
     <string name="delete_question">Видалити сховище?</string>
     <string name="delete">Видалити</string>
     <string name="cancel">Скасувати</string>

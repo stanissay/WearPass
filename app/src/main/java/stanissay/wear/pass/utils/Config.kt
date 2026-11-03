@@ -28,6 +28,7 @@ object DataConstants {
     const val PASSWORD = "Password"
     const val URL = "URL"
     const val NOTES = "Notes"
+    val STANDARD_FIELDS = setOf(TITLE, USER, PASSWORD, URL, NOTES)
     const val PASSWORD_VISIBLE_MS = 15_000L
     val SWIPE_THRESHOLD = 72.dp
 }

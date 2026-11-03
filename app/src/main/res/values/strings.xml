@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">WearPass</string>
+    <string name="version">Version</string>
     <string name="error">Error</string>
     <string name="no_access">No access to files. Run:</string>
     <string name="settings">Settings</string>
@@ -35,8 +36,9 @@
     <string name="empty">Empty</string>
     <string name="login">Login</string>
     <string name="notes">Notes</string>
+    <string name="attachments">Attachments</string>
     <string name="URL" translatable="false">URL</string>
-    <string name="show_password">Show password</string>
+    <string name="password">Password</string>
 
     <string name="delete_question">Delete vault?</string>
     <string name="delete">Delete</string>

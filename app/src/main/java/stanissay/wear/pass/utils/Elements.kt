@@ -53,20 +53,18 @@ fun MainTheme(content: @Composable () -> Unit) {
 @Composable
 fun CircularBar() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(PaddingStyle.circularBar)
+        modifier = Modifier.fillMaxSize()
             .background(MainColors.TRANSPARENT),
-        contentAlignment = Alignment.BottomCenter
+        contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
             colors = ProgressIndicatorColors(
-                indicatorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
-                trackBrush = SolidColor(MaterialTheme.colorScheme.secondary),
-                overflowTrackBrush = SolidColor(MaterialTheme.colorScheme.secondary),
-                disabledIndicatorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
-                disabledTrackBrush = SolidColor(MaterialTheme.colorScheme.secondary),
-                disabledOverflowTrackBrush = SolidColor(MaterialTheme.colorScheme.secondary)
+                indicatorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+                trackBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                overflowTrackBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                disabledIndicatorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+                disabledTrackBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                disabledOverflowTrackBrush = SolidColor(MaterialTheme.colorScheme.primary)
             )
         )
     }
@@ -165,7 +163,7 @@ fun ClickableListItem(
 ) {
     ClickableBox(
         modifier = modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
-        borderColor = MaterialTheme.colorScheme.outline,
+        borderColor = MaterialTheme.colorScheme.secondary,
         onClick = onClick
     ) { content() }
 }
@@ -175,7 +173,7 @@ fun KeyButton(label: String, onClick: () -> Unit) {
     ClickableBox(
         modifier = Modifier.size(UiConstants.BUTTON_SIZE),
         shape = CircleShape,
-        borderColor = MaterialTheme.colorScheme.outline,
+        borderColor = MaterialTheme.colorScheme.secondary,
         onClick = onClick
     ) { MainText(label) }
 }
@@ -266,7 +264,7 @@ fun SubTitle(
 fun MainDivider() {
     Box(
         modifier = Modifier.fillMaxWidth().height(UiConstants.THICKNESS)
-            .background(MaterialTheme.colorScheme.outline)
+            .background(MaterialTheme.colorScheme.secondary)
     )
 }
 
@@ -277,7 +275,7 @@ fun MainCheckBox(check: Boolean) {
             .clip(CircleShape)
             .background(
                 if (check) MaterialTheme.colorScheme.primary
-                else MaterialTheme.colorScheme.surfaceContainer
+                else MaterialTheme.colorScheme.secondary
             )
     )
 }

@@ -21,6 +21,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.navigation3.rememberSwipeDismissableSceneStrategy
 import stanissay.wear.pass.auth.AuthScreen
 import stanissay.wear.pass.browser.FileBrowserScreen
@@ -65,6 +66,10 @@ fun AppNav(vault: VaultRepository) {
     if (needsRelock) {
         Box(Modifier.fillMaxSize())
         return
+    }
+
+    val showTimeText = backStack.lastOrNull().let {
+        it is GroupKey || it is EntryKey || it is SettingsKey
     }
 
     SwipeLeftToOpen(onSwipe = openSettings) {
@@ -161,6 +166,7 @@ fun AppNav(vault: VaultRepository) {
                 }
             }
         )
+        if(showTimeText) TimeText()
     }
 }
 

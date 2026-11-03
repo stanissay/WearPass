@@ -31,6 +31,7 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.TimeText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -38,9 +39,11 @@ import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.ClickableListItem
 import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.MainDivider
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
+import stanissay.wear.pass.utils.Revealed
 import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.UiConstants
 import kotlin.time.Duration.Companion.milliseconds
@@ -64,7 +67,7 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
                     ) {
                         EntryIcon(g.icon, g.name)
                         SubTitle(g.name, modifier = Modifier.weight(1f), textAlign = TextAlign.Start)
-                        MainText("${g.entryCount}")
+                        MainText("${g.entryCount}", color = MaterialTheme.colorScheme.secondary)
                     }
                 }
             }
@@ -83,7 +86,12 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
                             verticalArrangement = Arrangement.Center
                         ) {
                             SubTitle(e.title.ifEmpty { stringResource(R.string.unnamed) })
-                            if (e.userName.isNotEmpty()) MainText(e.userName, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            if (e.userName.isNotEmpty()) MainText(
+                                text = e.userName,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = MaterialTheme.colorScheme.secondary
+                            )
                         }
                     }
                 }
@@ -97,27 +105,67 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
 fun EntryScreen(entryId: String) {
     val session = (LocalContext.current.applicationContext as App).session
     val entry = remember(entryId) { session.index?.entry(entryId) }
-    var password by remember(entryId) { mutableStateOf<String?>(null) }
+    var revealed by remember(entryId) { mutableStateOf<Revealed?>(null) }
 
-    LaunchedEffect(password) {
-        if (password != null) {
+    LaunchedEffect(revealed?.id) {
+        if (revealed != null) {
             delay(DataConstants.PASSWORD_VISIBLE_MS.milliseconds)
-            password = null
+            revealed = null
         }
+    }
+
+    fun toggle(id: String, load: () -> String?) {
+        revealed = if (revealed?.id == id) null else load()?.let { Revealed(id, it) }
     }
 
     ScalingLazyColumn(modifier = Modifier.fillMaxSize()) {
         entry?.let { e ->
-            item { ListHeader { EntryIcon(e.icon, e.title) } }
+            item { EntryIcon(e.icon, e.title) }
             item { ListHeader { PageTitle(e.title) } }
             if (e.userName.isNotEmpty()) item { Field(stringResource(R.string.login), e.userName) }
-            item {
-                ClickableListItem(onClick = { password = if (password == null) session.index?.password(entryId) else null }) {
-                    password?.let { p -> MainText(p, style = MaterialTheme.typography.bodyLarge) } ?: MainText(stringResource(R.string.show_password))
+            if (e.hasPassword) {
+                item {
+                    val shown = revealed?.id == DataConstants.PASSWORD
+                    ClickableListItem(onClick = {
+                        toggle(DataConstants.PASSWORD) {
+                            session.index?.password(
+                                entryId
+                            )
+                        }
+                    }) {
+                        if (shown) {
+                            MainText(revealed!!.value, style = MaterialTheme.typography.bodyLarge)
+                        } else MainText(stringResource(R.string.password))
+                    }
                 }
             }
             if (e.url.isNotEmpty()) item { Field(stringResource(R.string.URL), e.url) }
             if (e.notes.isNotEmpty()) item { Field(stringResource(R.string.notes), e.notes) }
+
+            if(entry.customFields.isNotEmpty()) {
+                item { MainDivider() }
+                entry.customFields.forEach { f ->
+                    if (!f.isProtected) {
+                        if (!f.value.isNullOrEmpty()) item { Field(f.name, f.value) }
+                    } else {
+                        val id = "cf:${f.name}"
+                        val shown = revealed?.id == id
+                        item {
+                            ClickableListItem(onClick = { toggle(id) { session.index?.customFieldValue(entryId, f.name) } }) {
+                                if(shown) {
+                                    MainText(revealed!!.value, style = MaterialTheme.typography.bodyLarge)
+                                } else MainText(f.name)
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (entry.attachments.isNotEmpty()) {
+                item { MainDivider() }
+                item { SubTitle(stringResource(R.string.attachments)) }
+                items(entry.attachments) { name -> MainText(name) }
+            }
         } ?: item { MainText(stringResource(R.string.no_entry)) }
     }
 }

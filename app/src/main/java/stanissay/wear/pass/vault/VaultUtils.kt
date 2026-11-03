@@ -22,13 +22,15 @@ data class EntryItem(
 )
 data class EntryView(
     val id: String, val title: String, val userName: String,
-    val url: String, val notes: String, val icon: IconRef
+    val hasPassword: Boolean, val url: String, val notes: String,
+    val icon: IconRef, val customFields: List<CustomField>, val attachments: List<String>
 )
 data class GroupView(
     val id: String, val name: String,
     val groups: List<GroupItem>, val entries: List<EntryItem>,
     val icon: IconRef
 )
+data class CustomField(val name: String, val value: String?, val isProtected: Boolean)
 
 enum class SyncNote { None, Updated, SourceMissing, SourceUnreadable }
 

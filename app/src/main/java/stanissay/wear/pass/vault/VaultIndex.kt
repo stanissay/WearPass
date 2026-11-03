@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import app.keemobile.kotpass.database.KeePassDatabase
 import app.keemobile.kotpass.models.CustomIcon
 import app.keemobile.kotpass.models.Entry
+import app.keemobile.kotpass.models.EntryValue
 import app.keemobile.kotpass.models.Group
 import stanissay.wear.pass.utils.DataConstants
 
@@ -52,14 +53,29 @@ class VaultIndex(db: KeePassDatabase) {
 
     fun entry(id: String): EntryView? = entries[id]?.let {
         EntryView(
-            id,
-            it.text(DataConstants.TITLE),
-            it.text(DataConstants.USER),
-            it.text(DataConstants.URL),
-            it.text(DataConstants.NOTES),
-            it.iconRef()
+            id = id,
+            title = it.text(DataConstants.TITLE),
+            userName = it.text(DataConstants.USER),
+            hasPassword = !it.fields[DataConstants.PASSWORD]?.content.isNullOrEmpty(),
+            url = it.text(DataConstants.URL),
+            notes = it.text(DataConstants.NOTES),
+            icon = it.iconRef(),
+            customFields = it.customFields(),
+            attachments = it.binaries.map { b -> b.name }.filter { n -> n.isNotBlank() },
         )
     }
+
+    private fun Entry.customFields(): List<CustomField> =
+        fields.entries
+            .filter { (name, _) ->
+                name !in DataConstants.STANDARD_FIELDS && !name.startsWith("KPH: ")
+            }
+            .map { (name, value) ->
+                val protected = value is EntryValue.Encrypted
+                CustomField(name, if (protected) null else value.content, protected)
+            }
+
+    fun customFieldValue(id: String, name: String): String? = entries[id]?.fields?.get(name)?.content
 
     fun password(id: String): String? = entries[id]?.fields?.get(DataConstants.PASSWORD)?.content
 

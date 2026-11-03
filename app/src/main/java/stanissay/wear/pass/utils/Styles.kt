@@ -17,8 +17,6 @@ object MainColors {
     val FIRST_ACCENT = Color(0xFF527F89)
     val SECOND_ACCENT = Color(0xFF3E4348)
     val WHITE = Color(0xFFD5D8DC)
-    val GRAY = Color(0xFF686D73)
-    val BORDER = Color(0xFF242629)
     val TRANSPARENT = Color(0x00000000)
     val NEGATIVE = Color(0xFF6C0808)
 }
@@ -59,9 +57,7 @@ val ColorStyle = ColorScheme(
     primary = MainColors.FIRST_ACCENT,
     secondary = MainColors.SECOND_ACCENT,
     background = MainColors.BACKGROUND,
-    surfaceContainer = MainColors.GRAY,
-    onBackground = MainColors.WHITE,
-    outline = MainColors.BORDER
+    onBackground = MainColors.WHITE
 )
 
 val ShapesStyle = Shapes(
@@ -85,16 +81,6 @@ object UiConstants {
 
 object PaddingStyle {
     val xs = PaddingValues(4.dp)
-    val xl = PaddingValues(16.dp)
-
     val horizontalXs = PaddingValues(horizontal = 6.dp)
-    val horizontalS = PaddingValues(horizontal = 8.dp)
-    val horizontalXl = PaddingValues(horizontal = 16.dp)
-
-    val verticalXxs = PaddingValues(vertical = 2.dp)
     val verticalXs = PaddingValues(vertical = 4.dp)
-
-    val none = PaddingValues(0.dp)
-    val circularBar = PaddingValues(36.dp)
-    val scrollBarV = PaddingValues(end = 2.dp)
 }

@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material3.ListHeader
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.TimeText
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.ClickableBox
@@ -42,6 +44,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val app = context.applicationContext as App
+    val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "0.0"
     val unlocked by app.session.unlocked.collectAsState()
     val status by app.vault.status.collectAsState()
     val method = remember { app.vault.unlockMethod }
@@ -103,6 +106,13 @@ fun SettingsScreen(
                 }
             }
             if(confirmWipe) item { ClickableListItem(onClick = { confirmWipe = false }) { MainText(stringResource(R.string.cancel)) } }
+        }
+        item {
+            MainText(
+                text = "${stringResource(R.string.version)} $versionName",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.secondary
+            )
         }
     }
 }

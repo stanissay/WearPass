@@ -58,7 +58,7 @@ fun MasterPasswordScreen(onOpened: () -> Unit, viewModel: MasterViewModel = view
                 onKeyboardAction = KeyboardActionHandler {
                     viewModel.unlock(field.text.toString(), onOpened)
                 },
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.outline),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
                 decorator = TextFieldDecorator { innerTextField ->
                     Box(
                         modifier = Modifier.fillMaxSize()
@@ -67,7 +67,7 @@ fun MasterPasswordScreen(onOpened: () -> Unit, viewModel: MasterViewModel = view
                     ) { innerTextField() }
                 },
                 modifier = Modifier.height(UiConstants.BASE_SIZE).fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceContainer, MaterialTheme.shapes.large)
+                    .background(MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.large)
                     .padding(PaddingStyle.xs)
             )
         }
