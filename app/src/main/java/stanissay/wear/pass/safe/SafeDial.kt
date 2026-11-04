@@ -1,7 +1,5 @@
 package stanissay.wear.pass.safe
 
-import android.view.HapticFeedbackConstants
-import android.view.View
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -10,7 +8,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -42,6 +39,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.wear.compose.material3.MaterialTheme
 import stanissay.wear.pass.App
+import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.LocalAmbient
 import stanissay.wear.pass.utils.MainCheckBox
@@ -69,9 +67,18 @@ fun SafeDial(
     val logic = remember(resetKey, DataConstants.SAFE_LENGTH) { SafeDialLogic(DataConstants.SAFE_LENGTH) }
     var cursor by remember(logic) { mutableStateOf<Int?>(null) }
     var count by remember(logic) { mutableIntStateOf(0) }
+    val rotary = remember(logic) { FloatArray(1) }
     var pendingLast by remember(logic) { mutableStateOf(false) }
     val dwell = remember(logic) { Animatable(0f) }
-
+    val primary = MaterialTheme.colorScheme.primary
+    val textStyle = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onBackground)
+    val measurer = rememberTextMeasurer()
+    val normal = remember(measurer) {
+        List(10) { measurer.measure(it.toString(), textStyle) }
+    }
+    val selected = remember(measurer) {
+        List(10) { measurer.measure(it.toString(), textStyle) }
+    }
     val onStep: (Int) -> Unit = remember(logic, haptics) {
         { dir ->
             if (currentEnabled) {
@@ -118,6 +125,17 @@ fun SafeDial(
             }
         }
     }
+    val handleRotary: (Float) -> Boolean = remember(logic) {
+        { px ->
+            if (px != 0f && rotary[0] != 0f && (px > 0f) != (rotary[0] > 0f)) rotary[0] = 0f
+            rotary[0] += px
+            while (rotary[0] >= DataConstants.PX_PER_STEP) { rotary[0] -= DataConstants.PX_PER_STEP; onStep(+1) }
+            while (rotary[0] <= -DataConstants.PX_PER_STEP) { rotary[0] += DataConstants.PX_PER_STEP; onStep(-1) }
+            true
+        }
+    }
+
+    BackHandler(enabled = !app.swipeGate.enabled) {}
 
     LaunchedEffect(logic, cursor, count, pendingLast) {
         dwell.snapTo(0f)
@@ -127,35 +145,13 @@ fun SafeDial(
         }
     }
 
-    BackHandler(enabled = !app.swipeGate.enabled) {}
-
     LaunchedEffect(ambient) {
         if (ambient) { logic.clear(); cursor = null; count = 0; pendingLast = false }
     }
 
-    val rotary = remember(logic) { FloatArray(1) }
-    val handleRotary: (Float) -> Boolean = remember(logic) {
-        { px ->
-            val delta = if (DataConstants.ROTARY_REVERSED) -px else px
-            if (delta != 0f && rotary[0] != 0f && (delta > 0f) != (rotary[0] > 0f)) rotary[0] = 0f
-            rotary[0] += delta
-            while (rotary[0] >= DataConstants.PX_PER_STEP) { rotary[0] -= DataConstants.PX_PER_STEP; onStep(+1) }
-            while (rotary[0] <= -DataConstants.PX_PER_STEP) { rotary[0] += DataConstants.PX_PER_STEP; onStep(-1) }
-            true
-        }
-    }
     DisposableEffect(handleRotary) {
         app.rotaryBus.listener = handleRotary
         onDispose { if (app.rotaryBus.listener === handleRotary) app.rotaryBus.listener = null }
-    }
-    val primary = MaterialTheme.colorScheme.primary
-    val textStyle = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onBackground)
-    val measurer = rememberTextMeasurer()
-    val normal = remember(measurer) {
-        List(10) { measurer.measure(it.toString(), textStyle) }
-    }
-    val selected = remember(measurer) {
-        List(10) { measurer.measure(it.toString(), textStyle) }
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -241,33 +237,24 @@ fun SafeDial(
             }
         }
 
-        Column(
-            modifier = Modifier
+        ClickableBox(
+            modifier = Modifier.size(diameter * DataConstants.CENTER_FRACTION)
                 .align(Alignment.Center)
-                .size(diameter * DataConstants.CENTER_FRACTION)
-                .clip(CircleShape)
-                .pointerInput(logic) {
-                    detectTapGestures(
-                        onTap = { onTap() },
-                        onLongPress = { onClearAll() }
-                    )
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .clip(CircleShape),
+            onClick = { onTap() },
+            onLongClick = { onClearAll() }
         ) {
-            MainText(subtitle ?: title)
-            Row(horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)) {
-                repeat(DataConstants.SAFE_LENGTH) { i ->
-                    MainCheckBox(check = i < count)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
+            ) {
+                MainText(subtitle ?: title)
+                Row(horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)) {
+                    repeat(DataConstants.SAFE_LENGTH) { i ->
+                        MainCheckBox(check = i < count)
+                    }
                 }
             }
         }
     }
-}
-
-class DialHaptics(private val view: View) {
-    fun tick() = perform(HapticFeedbackConstants.CLOCK_TICK)
-    fun commit() = perform(HapticFeedbackConstants.CONFIRM)
-    fun clear() = perform(HapticFeedbackConstants.CONTEXT_CLICK)
-    private fun perform(constant: Int) { view.performHapticFeedback(constant) }
 }

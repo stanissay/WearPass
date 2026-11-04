@@ -14,7 +14,7 @@ object DataConstants {
     const val BROWSER_ROOT = "/"
     const val BROWSER_UP = ".."
     const val PIN_LENGTH = 4
-    const val SAFE_LENGTH = 6
+    const val SAFE_LENGTH = 4
     const val ANDROID_KEY_STORE = "AndroidKeyStore"
     const val PIN_ALIAS = "wearkeepass_pin_wrap"
     const val SAFE_ALIAS = "wearkeepass_safe_wrap"
@@ -36,7 +36,6 @@ object DataConstants {
     const val TWO_PI = (2.0 * Math.PI).toFloat()
     const val STEP_RAD = TWO_PI / 10f
     const val PX_PER_STEP = 136f
-    const val ROTARY_REVERSED = false
     const val RING_FRACTION = 0.75f
     const val CHIP_FRACTION = 0.15f
     const val CENTER_FRACTION = 0.5f
