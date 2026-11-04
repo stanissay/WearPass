@@ -31,14 +31,15 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.TimeText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.ClickableListItem
+import stanissay.wear.pass.utils.ColoredPassword
 import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.LocalAmbient
 import stanissay.wear.pass.utils.MainDivider
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PaddingStyle
@@ -103,9 +104,12 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
 
 @Composable
 fun EntryScreen(entryId: String) {
+    val ambient = LocalAmbient.current
     val session = (LocalContext.current.applicationContext as App).session
     val entry = remember(entryId) { session.index?.entry(entryId) }
     var revealed by remember(entryId) { mutableStateOf<Revealed?>(null) }
+
+    LaunchedEffect(ambient) { if (ambient) revealed = null }
 
     LaunchedEffect(revealed?.id) {
         if (revealed != null) {
@@ -133,9 +137,7 @@ fun EntryScreen(entryId: String) {
                             )
                         }
                     }) {
-                        if (shown) {
-                            MainText(revealed!!.value, style = MaterialTheme.typography.bodyLarge)
-                        } else MainText(stringResource(R.string.password))
+                        if (shown) ColoredPassword(revealed!!.value) else MainText(stringResource(R.string.password))
                     }
                 }
             }
@@ -152,9 +154,7 @@ fun EntryScreen(entryId: String) {
                         val shown = revealed?.id == id
                         item {
                             ClickableListItem(onClick = { toggle(id) { session.index?.customFieldValue(entryId, f.name) } }) {
-                                if(shown) {
-                                    MainText(revealed!!.value, style = MaterialTheme.typography.bodyLarge)
-                                } else MainText(f.name)
+                                if(shown) ColoredPassword(revealed!!.value) else MainText(f.name)
                             }
                         }
                     }

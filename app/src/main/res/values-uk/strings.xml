@@ -41,4 +41,8 @@
     <string name="delete">Видалити</string>
     <string name="cancel">Скасувати</string>
     <string name="on">Увімкнути</string>
+
+    <string name="autofill">Автозаповнення</string>
+    <string name="credential_unlock">Розблокуй WearPass</string>
+    <string name="credential_open">Відкрий і розблокуй WearPass</string>
 </resources>

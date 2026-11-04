@@ -44,4 +44,8 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="on">On</string>
+
+    <string name="autofill">Autofill</string>
+    <string name="credential_unlock">Unlock WearPass</string>
+    <string name="credential_open">Open and unlock WearPass</string>
 </resources>

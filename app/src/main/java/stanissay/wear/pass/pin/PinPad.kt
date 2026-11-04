@@ -3,8 +3,10 @@ package stanissay.wear.pass.pin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,7 +63,7 @@ fun PinPad(
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)) {
-                KeyButton("") {}
+                Spacer(Modifier.size(UiConstants.BUTTON_SIZE))
                 KeyButton("0") { press('0') }
                 KeyButton("⌫") { digits = digits.dropLast(1) }
             }

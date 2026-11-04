@@ -1,5 +1,6 @@
 package stanissay.wear.pass.utils
 
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.unit.dp
 
 object DataConstants {
@@ -29,6 +30,9 @@ object DataConstants {
     const val URL = "URL"
     const val NOTES = "Notes"
     val STANDARD_FIELDS = setOf(TITLE, USER, PASSWORD, URL, NOTES)
+    const val EXTRA_ENTRY_ID = "entry_id"
     const val PASSWORD_VISIBLE_MS = 15_000L
     val SWIPE_THRESHOLD = 72.dp
 }
+
+val LocalAmbient = compositionLocalOf { false }

@@ -1,5 +1,8 @@
 package stanissay.wear.pass.utils
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import androidx.navigation3.runtime.NavKey
 import stanissay.wear.pass.settings.UnlockMethod
 import java.io.File
@@ -46,3 +49,15 @@ fun NavKey.requiresUnlock() = this is GroupKey || this is EntryKey || this is Au
 fun codeLength(method: UnlockMethod) = if (method == UnlockMethod.Pin) DataConstants.PIN_LENGTH else DataConstants.SAFE_LENGTH
 
 data class Revealed(val id: String, val value: String)
+
+@SuppressLint("WearRecents")
+fun openCredentialSettings(context: Context) {
+    runCatching { androidx.credentials.CredentialManager.create(context).createSettingsPendingIntent().send() }
+        .onFailure {
+            runCatching {
+                context.startActivity(
+                    Intent("android.settings.CREDENTIAL_PROVIDER").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            }
+        }
+}

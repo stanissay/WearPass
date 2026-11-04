@@ -15,7 +15,7 @@ android {
         minSdk = 34
         targetSdk = 37
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1"
     }
 
     buildTypes {
@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.compose.material)
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.tooling)
+    implementation(libs.androidx.wear)
     implementation(libs.core.splashscreen)
     implementation(libs.play.services.wearable)
     implementation(libs.ui)
@@ -54,4 +55,6 @@ dependencies {
     implementation(libs.datastore.preferences)
     implementation(libs.androidx.watchface.complications.rendering)
     implementation(libs.androidx.watchface.complications.data.source.ktx)
+    //noinspection LoginCredentials
+    implementation(libs.androidx.credentials)
 }

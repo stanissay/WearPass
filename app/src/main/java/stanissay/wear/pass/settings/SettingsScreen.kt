@@ -20,19 +20,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.TimeText
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.ClickableListItem
+import stanissay.wear.pass.utils.MainCheckBox
 import stanissay.wear.pass.utils.MainColors
 import stanissay.wear.pass.utils.MainDivider
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
-import stanissay.wear.pass.utils.MainCheckBox
 import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.UiConstants
+import stanissay.wear.pass.utils.openCredentialSettings
 import stanissay.wear.pass.vault.VaultStatus
 
 @Composable
@@ -58,7 +58,8 @@ fun SettingsScreen(
         item { ListHeader { PageTitle(stringResource(R.string.settings)) } }
 
         if (unlocked) {
-            item { ClickableListItem(onClick = onLockNow) { MainText(stringResource(R.string.lock_now)) } }
+            if (method != UnlockMethod.SystemLock) item { ClickableListItem(onClick = onLockNow) { MainText(stringResource(R.string.lock_now)) } }
+            item { ClickableListItem(onClick = { openCredentialSettings(context) }) { MainText(stringResource(R.string.autofill)) } }
             item { MainDivider() }
             item { SubTitle(stringResource(R.string.lock_type)) }
             item {

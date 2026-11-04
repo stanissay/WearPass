@@ -24,10 +24,13 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.wear.compose.material3.CircularProgressIndicator
@@ -257,6 +260,38 @@ fun SubTitle(
         textAlign = textAlign,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Composable
+fun ColoredPassword(password: String) {
+    val letterColor = MaterialTheme.colorScheme.onBackground
+    val digitColor = MaterialTheme.colorScheme.primary
+    val symbolColor = MaterialTheme.colorScheme.secondary
+
+    val text = remember(password, letterColor) {
+        buildAnnotatedString {
+            var i = 0
+            while (i < password.length) {
+                val cp = password.codePointAt(i)
+                val len = Character.charCount(cp)
+
+                val (shown, color) = when {
+                    cp == ' '.code -> "␣" to symbolColor
+                    Character.isDigit(cp) -> password.substring(i, i + len) to digitColor
+                    Character.isLetter(cp) -> password.substring(i, i + len) to letterColor
+                    else -> password.substring(i, i + len) to symbolColor
+                }
+                withStyle(SpanStyle(color = color)) { append(shown) }
+
+                i += len
+            }
+        }
+    }
+
+    MainText(
+        text = text,
+        style = MaterialTheme.typography.bodyLarge
     )
 }
 

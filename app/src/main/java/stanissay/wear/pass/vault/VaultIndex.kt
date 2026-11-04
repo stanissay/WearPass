@@ -21,11 +21,15 @@ class VaultIndex(db: KeePassDatabase) {
     init {
         val root = db.content.group
         rootId = root.uuid.toString()
-        val binId = db.content.meta.recycleBinUuid?.toString()
+        val meta = db.content.meta
+        val hidden = setOfNotNull(
+            meta.recycleBinUuid?.toString(),
+            meta.entryTemplatesGroup?.toString(),
+        )
         fun walk(g: Group) {
             groups[g.uuid.toString()] = g
             g.entries.forEach { entries[it.uuid.toString()] = it }
-            g.groups.forEach { if (it.uuid.toString() != binId) walk(it) }
+            g.groups.forEach { if (it.uuid.toString() !in hidden) walk(it) }
         }
         walk(root)
     }
@@ -108,4 +112,15 @@ class VaultIndex(db: KeePassDatabase) {
         val opts = BitmapFactory.Options().apply { inSampleSize = sample }
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.size, opts)?.asImageBitmap()
     }
+
+    private fun Entry.matchesApp(pkg: String) =
+        text(DataConstants.URL).trim().equals("androidapp://$pkg", ignoreCase = true)
+
+    fun entriesForApp(pkg: String): List<EntryItem> =
+        entries.values
+            .filter { it.matchesApp(pkg) }
+            .map { EntryItem(it.uuid.toString(), it.text(DataConstants.TITLE), it.text(DataConstants.USER), it.iconRef()) }
+            .sortedBy { it.title.lowercase() }
+
+    fun matchesApp(id: String, pkg: String): Boolean = entries[id]?.matchesApp(pkg) == true
 }
