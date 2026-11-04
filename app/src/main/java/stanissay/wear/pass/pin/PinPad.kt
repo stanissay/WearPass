@@ -25,7 +25,6 @@ import stanissay.wear.pass.utils.UiConstants
 @Composable
 fun PinPad(
     title: String,
-    length: Int = DataConstants.PIN_LENGTH,
     subtitle: String? = null,
     enabled: Boolean = true,
     resetKey: Any = Unit,
@@ -34,9 +33,9 @@ fun PinPad(
     var digits by remember(resetKey) { mutableStateOf("") }
 
     fun press(d: Char) {
-        if (!enabled || digits.length >= length) return
+        if (!enabled || digits.length >= DataConstants.PIN_LENGTH) return
         digits += d
-        if (digits.length == length) onComplete(digits.toCharArray())
+        if (digits.length == DataConstants.PIN_LENGTH) onComplete(digits.toCharArray())
     }
 
     Column(
@@ -51,7 +50,7 @@ fun PinPad(
             modifier = Modifier.padding(PaddingStyle.verticalXs),
             horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
         ) {
-            repeat(length) { i ->
+            repeat(DataConstants.PIN_LENGTH) { i ->
                 MainCheckBox(check = i < digits.length)
             }
         }

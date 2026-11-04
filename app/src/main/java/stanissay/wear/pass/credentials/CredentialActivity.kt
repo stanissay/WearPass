@@ -22,13 +22,13 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import stanissay.wear.pass.App
 import stanissay.wear.pass.MainActivity
 import stanissay.wear.pass.R
-import stanissay.wear.pass.pin.PinUnlockScreen
 import stanissay.wear.pass.settings.UnlockMethod
 import stanissay.wear.pass.sl.SystemUnlockScreen
 import stanissay.wear.pass.utils.ClickableListItem
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.MainTheme
+import stanissay.wear.pass.utils.CodeUnlockScreen
 import stanissay.wear.pass.vault.VaultStatus
 
 class CredentialActivity : ComponentActivity() {
@@ -51,11 +51,11 @@ class CredentialActivity : ComponentActivity() {
                 val status by app.vault.status.collectAsState()
                 val done = { deliverEntries(app, begin) }
                 when (status) {
-                    VaultStatus.PinLocked -> PinUnlockScreen(
+                    VaultStatus.PinLocked -> CodeUnlockScreen(
                         method = UnlockMethod.Pin, onUnlocked = done,
                         onForcedMaster = ::cancel
                     )
-                    VaultStatus.SafeLocked -> PinUnlockScreen(
+                    VaultStatus.SafeLocked -> CodeUnlockScreen(
                         method = UnlockMethod.Safe, onUnlocked = done,
                         onForcedMaster = ::cancel
                     )

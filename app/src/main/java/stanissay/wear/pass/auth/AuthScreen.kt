@@ -8,9 +8,9 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import stanissay.wear.pass.R
 import stanissay.wear.pass.pin.PinPad
+import stanissay.wear.pass.safe.SafeDial
 import stanissay.wear.pass.settings.UnlockMethod
 import stanissay.wear.pass.sl.SystemPrompt
-import stanissay.wear.pass.utils.DataConstants
 
 @Composable
 fun AuthScreen(
@@ -38,9 +38,8 @@ fun AuthScreen(
                 onRetry = { viewModel.confirmSystem(onConfirmed, onForcedMaster) },
             )
         }
-        UnlockMethod.Safe -> PinPad(
+        UnlockMethod.Safe -> SafeDial(
             title = stringResource(R.string.confirm_safe),
-            length = DataConstants.SAFE_LENGTH,
             subtitle = state.message,
             enabled = !state.busy,
             resetKey = state.resetKey,

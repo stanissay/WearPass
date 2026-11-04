@@ -1,6 +1,10 @@
 package stanissay.wear.pass
 
 import android.os.Bundle
+import android.util.Log
+import android.view.InputDevice
+import android.view.MotionEvent
+import android.view.ViewConfiguration
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,6 +26,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewConfigurationCompat
 import androidx.wear.ambient.AmbientLifecycleObserver
 import androidx.wear.compose.material3.TimeText
 import stanissay.wear.pass.utils.LocalAmbient
@@ -84,6 +89,16 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         lifecycle.removeObserver(ambientObserver)
         super.onDestroy()
+    }
+
+    override fun dispatchGenericMotionEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_SCROLL && ev.isFromSource(InputDevice.SOURCE_ROTARY_ENCODER)) {
+            val raw = ev.getAxisValue(MotionEvent.AXIS_SCROLL)
+            val px = -raw * ViewConfigurationCompat.getScaledVerticalScrollFactor(ViewConfiguration.get(this), this)
+            Log.d("Rotary", "raw=$raw px=$px")
+            if (app.rotaryBus.listener?.invoke(px) == true) return true
+        }
+        return super.dispatchGenericMotionEvent(ev)
     }
 }
 

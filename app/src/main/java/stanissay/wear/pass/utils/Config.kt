@@ -33,6 +33,14 @@ object DataConstants {
     const val EXTRA_ENTRY_ID = "entry_id"
     const val PASSWORD_VISIBLE_MS = 15_000L
     val SWIPE_THRESHOLD = 72.dp
+    const val TWO_PI = (2.0 * Math.PI).toFloat()
+    const val STEP_RAD = TWO_PI / 10f
+    const val PX_PER_STEP = 40f
+    const val ROTARY_REVERSED = false
+    const val RING_FRACTION = 0.75f
+    const val CHIP_FRACTION = 0.15f
+    const val CENTER_FRACTION = 0.5f
+    const val SAFE_DWELL_MS = 2000
 }
 
 val LocalAmbient = compositionLocalOf { false }

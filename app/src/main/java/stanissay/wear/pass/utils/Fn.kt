@@ -3,8 +3,10 @@ package stanissay.wear.pass.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.navigation3.runtime.NavKey
-import stanissay.wear.pass.settings.UnlockMethod
 import java.io.File
 import java.nio.ByteBuffer
 import java.nio.CharBuffer
@@ -46,8 +48,6 @@ fun sha256(f: File): ByteArray {
 
 fun NavKey.requiresUnlock() = this is GroupKey || this is EntryKey || this is AuthKey || this is PinSetupKey || this is SafeSetupKey || this is SystemSetupKey
 
-fun codeLength(method: UnlockMethod) = if (method == UnlockMethod.Pin) DataConstants.PIN_LENGTH else DataConstants.SAFE_LENGTH
-
 data class Revealed(val id: String, val value: String)
 
 @SuppressLint("WearRecents")
@@ -60,4 +60,15 @@ fun openCredentialSettings(context: Context) {
                 )
             }
         }
+}
+
+class SwipeGate {
+    private var blockers by mutableIntStateOf(0)
+    val enabled get() = blockers == 0
+    fun block() { blockers++ }
+    fun unblock() { blockers = (blockers - 1).coerceAtLeast(0) }
+}
+
+class RotaryBus {
+    @Volatile var listener: ((Float) -> Boolean)? = null
 }

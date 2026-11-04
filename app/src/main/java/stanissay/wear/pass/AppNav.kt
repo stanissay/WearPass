@@ -26,8 +26,6 @@ import androidx.wear.compose.navigation3.rememberSwipeDismissableSceneStrategy
 import stanissay.wear.pass.auth.AuthScreen
 import stanissay.wear.pass.browser.FileBrowserScreen
 import stanissay.wear.pass.master.MasterPasswordScreen
-import stanissay.wear.pass.pin.PinSetupScreen
-import stanissay.wear.pass.pin.PinUnlockScreen
 import stanissay.wear.pass.settings.SettingsScreen
 import stanissay.wear.pass.settings.UnlockMethod
 import stanissay.wear.pass.sl.SystemSetupScreen
@@ -39,7 +37,9 @@ import stanissay.wear.pass.utils.FileBrowserKey
 import stanissay.wear.pass.utils.GroupKey
 import stanissay.wear.pass.utils.MasterPasswordKey
 import stanissay.wear.pass.utils.PinSetupKey
+import stanissay.wear.pass.utils.CodeSetupScreen
 import stanissay.wear.pass.utils.PinUnlockKey
+import stanissay.wear.pass.utils.CodeUnlockScreen
 import stanissay.wear.pass.utils.SafeSetupKey
 import stanissay.wear.pass.utils.SafeUnlockKey
 import stanissay.wear.pass.utils.SettingsKey
@@ -54,7 +54,8 @@ import kotlin.math.abs
 
 @Composable
 fun AppNav(vault: VaultRepository) {
-    val session = (LocalContext.current.applicationContext as App).session
+    val app = LocalContext.current.applicationContext as App
+    val session = app.session
     val backStack = rememberNavBackStack(remember { startKey(vault) })
     val relock: () -> Unit = { backStack.clear(); backStack.add(startKey(vault)) }
     val openSettings: () -> Unit = {
@@ -62,7 +63,9 @@ fun AppNav(vault: VaultRepository) {
     }
     val unlocked by session.unlocked.collectAsState()
     val needsRelock = !unlocked && backStack.any { it.requiresUnlock() }
+
     LaunchedEffect(needsRelock) { if (needsRelock) relock() }
+
     if (needsRelock) {
         Box(Modifier.fillMaxSize())
         return
@@ -72,7 +75,7 @@ fun AppNav(vault: VaultRepository) {
         it is GroupKey || it is EntryKey || it is SettingsKey
     }
 
-    SwipeLeftToOpen(onSwipe = openSettings) {
+    SwipeLeftToOpen(enabled = app.swipeGate.enabled, onSwipe = openSettings) {
         NavDisplay(
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
@@ -80,7 +83,7 @@ fun AppNav(vault: VaultRepository) {
                 rememberSaveableStateHolderNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator(),
             ),
-            sceneStrategies = listOf(rememberSwipeDismissableSceneStrategy()),
+            sceneStrategies = listOf(rememberSwipeDismissableSceneStrategy(isUserSwipeEnabled = app.swipeGate.enabled)),
             entryProvider = entryProvider {
                 entry<FileBrowserKey> {
                     FileBrowserScreen(onImported = {
@@ -95,14 +98,14 @@ fun AppNav(vault: VaultRepository) {
                 entry<PinSetupKey> {
                     DisposableEffect(Unit) { onDispose { session.clearPendingPassword() } }
                     Guarded(session.isUnlocked, relock) {
-                        PinSetupScreen(
+                        CodeSetupScreen(
                             method = UnlockMethod.Pin,
                             onDone = { backStack.clear(); backStack.add(GroupKey()) }
                         )
                     }
                 }
                 entry<PinUnlockKey> {
-                    PinUnlockScreen(
+                    CodeUnlockScreen(
                         method = UnlockMethod.Pin,
                         onUnlocked = { backStack.clear(); backStack.add(GroupKey()) },
                         onForcedMaster = { backStack.clear(); backStack.add(MasterPasswordKey) }
@@ -139,14 +142,14 @@ fun AppNav(vault: VaultRepository) {
                 entry<SafeSetupKey> {
                     DisposableEffect(Unit) { onDispose { session.clearPendingPassword() } }
                     Guarded(session.isUnlocked, relock) {
-                        PinSetupScreen(
+                        CodeSetupScreen(
                             method = UnlockMethod.Safe,
                             onDone = { backStack.clear(); backStack.add(GroupKey()) }
                         )
                     }
                 }
                 entry<SafeUnlockKey> {
-                    PinUnlockScreen(
+                    CodeUnlockScreen(
                         method = UnlockMethod.Safe,
                         onUnlocked = { backStack.clear(); backStack.add(GroupKey()) },
                         onForcedMaster = { backStack.clear(); backStack.add(MasterPasswordKey) }
