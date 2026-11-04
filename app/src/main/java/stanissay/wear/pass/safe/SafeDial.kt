@@ -1,6 +1,5 @@
 package stanissay.wear.pass.safe
 
-import android.util.Log
 import android.view.HapticFeedbackConstants
 import android.view.View
 import androidx.activity.compose.BackHandler
@@ -150,7 +149,6 @@ fun SafeDial(
         onDispose { if (app.rotaryBus.listener === handleRotary) app.rotaryBus.listener = null }
     }
     val primary = MaterialTheme.colorScheme.primary
-    val secondary = MaterialTheme.colorScheme.secondary
     val textStyle = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onBackground)
     val measurer = rememberTextMeasurer()
     val normal = remember(measurer) {
