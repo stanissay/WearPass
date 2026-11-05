@@ -1,3 +1,18 @@
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 package stanissay.wear.pass.vault
 
 import android.graphics.BitmapFactory
@@ -9,7 +24,13 @@ import app.keemobile.kotpass.models.CustomIcon
 import app.keemobile.kotpass.models.Entry
 import app.keemobile.kotpass.models.EntryValue
 import app.keemobile.kotpass.models.Group
+import stanissay.wear.pass.utils.CustomField
 import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.EntryItem
+import stanissay.wear.pass.utils.EntryView
+import stanissay.wear.pass.utils.GroupItem
+import stanissay.wear.pass.utils.GroupView
+import stanissay.wear.pass.utils.IconRef
 
 class VaultIndex(db: KeePassDatabase) {
     private val groups = HashMap<String, Group>()
@@ -49,7 +70,8 @@ class VaultIndex(db: KeePassDatabase) {
                         it.uuid.toString(),
                         it.text(DataConstants.TITLE),
                         it.text(DataConstants.USER),
-                        it.iconRef())
+                        it.iconRef()
+                    )
                 }.sortedBy { it.title.lowercase() },
             icon = g.iconRef()
         )
@@ -119,7 +141,14 @@ class VaultIndex(db: KeePassDatabase) {
     fun entriesForApp(pkg: String): List<EntryItem> =
         entries.values
             .filter { it.matchesApp(pkg) }
-            .map { EntryItem(it.uuid.toString(), it.text(DataConstants.TITLE), it.text(DataConstants.USER), it.iconRef()) }
+            .map {
+                EntryItem(
+                    it.uuid.toString(),
+                    it.text(DataConstants.TITLE),
+                    it.text(DataConstants.USER),
+                    it.iconRef()
+                )
+            }
             .sortedBy { it.title.lowercase() }
 
     fun matchesApp(id: String, pkg: String): Boolean = entries[id]?.matchesApp(pkg) == true

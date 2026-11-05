@@ -1,4 +1,19 @@
-package stanissay.wear.pass.sl
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+package stanissay.wear.pass.lock
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -9,6 +24,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
+import stanissay.wear.pass.utils.SystemUnlockResult
+import stanissay.wear.pass.utils.SystemUnlockState
 
 class SystemUnlockViewModel(application: Application) : AndroidViewModel(application) {
     private val app = getApplication<App>()

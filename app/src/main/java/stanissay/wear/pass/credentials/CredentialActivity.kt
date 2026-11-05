@@ -1,3 +1,18 @@
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 package stanissay.wear.pass.credentials
 
 import android.annotation.SuppressLint
@@ -22,14 +37,14 @@ import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import stanissay.wear.pass.App
 import stanissay.wear.pass.MainActivity
 import stanissay.wear.pass.R
-import stanissay.wear.pass.settings.UnlockMethod
-import stanissay.wear.pass.sl.SystemUnlockScreen
+import stanissay.wear.pass.utils.UnlockMethod
+import stanissay.wear.pass.lock.SystemUnlockScreen
 import stanissay.wear.pass.utils.ClickableListItem
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.MainTheme
-import stanissay.wear.pass.utils.CodeUnlockScreen
-import stanissay.wear.pass.vault.VaultStatus
+import stanissay.wear.pass.pin.CodeUnlockScreen
+import stanissay.wear.pass.utils.VaultStatus
 
 class CredentialActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

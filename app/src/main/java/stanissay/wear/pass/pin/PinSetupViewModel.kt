@@ -1,3 +1,18 @@
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 package stanissay.wear.pass.pin
 
 import android.app.Application
@@ -12,7 +27,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
-import stanissay.wear.pass.settings.UnlockMethod
+import stanissay.wear.pass.utils.UnlockMethod
+import stanissay.wear.pass.utils.PinSetupState
 
 class PinSetupViewModel(application: Application) : AndroidViewModel(application) {
     private val app = getApplication<App>()
@@ -32,7 +48,12 @@ class PinSetupViewModel(application: Application) : AndroidViewModel(application
         }
         if (!pin.contentEquals(first)) {
             first = null
-            _state.update { PinSetupState(error = application.getString(R.string.incorrect_pin), resetKey = it.resetKey + 1) }
+            _state.update {
+                PinSetupState(
+                    error = application.getString(R.string.incorrect_pin),
+                    resetKey = it.resetKey + 1
+                )
+            }
             return
         }
 
@@ -51,7 +72,10 @@ class PinSetupViewModel(application: Application) : AndroidViewModel(application
                 },
                 onFailure = { e ->
                     _state.update {
-                        PinSetupState(error = e.message ?: application.getString(R.string.error), resetKey = it.resetKey + 1)
+                        PinSetupState(
+                            error = e.message ?: application.getString(R.string.error),
+                            resetKey = it.resetKey + 1
+                        )
                     }
                 }
             )

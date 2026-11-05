@@ -1,3 +1,18 @@
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 package stanissay.wear.pass
 
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -27,19 +42,19 @@ import stanissay.wear.pass.auth.AuthScreen
 import stanissay.wear.pass.browser.FileBrowserScreen
 import stanissay.wear.pass.master.MasterPasswordScreen
 import stanissay.wear.pass.settings.SettingsScreen
-import stanissay.wear.pass.settings.UnlockMethod
-import stanissay.wear.pass.sl.SystemSetupScreen
-import stanissay.wear.pass.sl.SystemUnlockScreen
-import stanissay.wear.pass.utils.AuthKey
+import stanissay.wear.pass.utils.UnlockMethod
+import stanissay.wear.pass.lock.SystemSetupScreen
+import stanissay.wear.pass.lock.SystemUnlockScreen
 import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.pin.CodeSetupScreen
+import stanissay.wear.pass.pin.CodeUnlockScreen
+import stanissay.wear.pass.utils.AuthKey
 import stanissay.wear.pass.utils.EntryKey
 import stanissay.wear.pass.utils.FileBrowserKey
 import stanissay.wear.pass.utils.GroupKey
 import stanissay.wear.pass.utils.MasterPasswordKey
 import stanissay.wear.pass.utils.PinSetupKey
-import stanissay.wear.pass.utils.CodeSetupScreen
 import stanissay.wear.pass.utils.PinUnlockKey
-import stanissay.wear.pass.utils.CodeUnlockScreen
 import stanissay.wear.pass.utils.SafeSetupKey
 import stanissay.wear.pass.utils.SafeUnlockKey
 import stanissay.wear.pass.utils.SettingsKey
@@ -49,7 +64,7 @@ import stanissay.wear.pass.utils.requiresUnlock
 import stanissay.wear.pass.vault.EntryScreen
 import stanissay.wear.pass.vault.GroupScreen
 import stanissay.wear.pass.vault.VaultRepository
-import stanissay.wear.pass.vault.VaultStatus
+import stanissay.wear.pass.utils.VaultStatus
 import kotlin.math.abs
 
 @Composable

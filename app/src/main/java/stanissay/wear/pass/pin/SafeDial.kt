@@ -1,4 +1,19 @@
-package stanissay.wear.pass.safe
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+package stanissay.wear.pass.pin
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
@@ -40,9 +55,11 @@ import androidx.wear.compose.material3.MaterialTheme
 import stanissay.wear.pass.App
 import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.DialHaptics
 import stanissay.wear.pass.utils.LocalAmbient
 import stanissay.wear.pass.utils.MainCheckBox
 import stanissay.wear.pass.utils.MainText
+import stanissay.wear.pass.utils.SafeResult
 import stanissay.wear.pass.utils.UiConstants
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -63,7 +80,7 @@ fun SafeDial(
     val haptics = remember(view) { DialHaptics(view) }
     val currentEnabled by rememberUpdatedState(enabled)
     val currentOnComplete by rememberUpdatedState(onComplete)
-    val logic = remember(resetKey, DataConstants.SAFE_LENGTH) { SafeDialLogic(DataConstants.SAFE_LENGTH) }
+    val logic = remember(resetKey, DataConstants.SAFE_LENGTH) { SafeLogic(DataConstants.SAFE_LENGTH) }
     var cursor by remember(logic) { mutableStateOf<Int?>(null) }
     var count by remember(logic) { mutableIntStateOf(0) }
     val rotary = remember(logic) { FloatArray(1) }

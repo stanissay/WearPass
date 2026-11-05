@@ -23,6 +23,7 @@ uiGraphics = "1.12.1"
 uiText = "1.12.1"
 
 [libraries]
+#noinspection LoginCredentials
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
 compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "composeNavigation3" }

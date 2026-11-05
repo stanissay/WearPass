@@ -1,3 +1,18 @@
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 package stanissay.wear.pass.pin
 
 import android.app.Application
@@ -12,7 +27,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.App
 import stanissay.wear.pass.R
-import stanissay.wear.pass.settings.UnlockMethod
+import stanissay.wear.pass.utils.UnlockMethod
+import stanissay.wear.pass.utils.PinResult
+import stanissay.wear.pass.utils.PinUnlockState
 
 class PinUnlockViewModel(application: Application) : AndroidViewModel(application) {
     private val app = getApplication<App>()

@@ -1,3 +1,18 @@
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 package stanissay.wear.pass.master
 
 import androidx.compose.foundation.background
@@ -32,6 +47,7 @@ import stanissay.wear.pass.utils.ClickableListItem
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PageTitle
 import stanissay.wear.pass.utils.UiConstants
+import stanissay.wear.pass.utils.UnlockState
 
 @Composable
 fun MasterPasswordScreen(onOpened: () -> Unit, viewModel: MasterViewModel = viewModel()) {

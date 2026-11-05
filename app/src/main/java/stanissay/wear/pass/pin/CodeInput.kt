@@ -1,4 +1,19 @@
-package stanissay.wear.pass.utils
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+package stanissay.wear.pass.pin
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import stanissay.wear.pass.R
-import stanissay.wear.pass.pin.PinPad
-import stanissay.wear.pass.pin.PinSetupViewModel
-import stanissay.wear.pass.pin.PinUnlockViewModel
-import stanissay.wear.pass.safe.SafeDial
-import stanissay.wear.pass.settings.UnlockMethod
+import stanissay.wear.pass.utils.CircularBar
+import stanissay.wear.pass.utils.UiConstants
+import stanissay.wear.pass.utils.UnlockMethod
 
 @Composable
 fun CodeInput(

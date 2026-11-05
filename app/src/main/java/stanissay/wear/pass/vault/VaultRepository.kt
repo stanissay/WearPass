@@ -1,3 +1,18 @@
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 package stanissay.wear.pass.vault
 
 import android.content.Context
@@ -8,8 +23,12 @@ import app.keemobile.kotpass.database.decode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import stanissay.wear.pass.R
-import stanissay.wear.pass.settings.UnlockMethod
+import stanissay.wear.pass.utils.UnlockMethod
 import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.OpenResult
+import stanissay.wear.pass.utils.SyncNote
+import stanissay.wear.pass.utils.Synced
+import stanissay.wear.pass.utils.VaultStatus
 import stanissay.wear.pass.utils.sha256
 import stanissay.wear.pass.utils.writeAtomic
 import java.io.DataInputStream

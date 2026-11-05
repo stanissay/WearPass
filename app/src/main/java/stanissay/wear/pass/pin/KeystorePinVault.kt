@@ -1,3 +1,18 @@
+/*
+ * KeePass manager for Wear OS
+ * Copyright (C) 2026 [stanissay]
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
 package stanissay.wear.pass.pin
 
 import android.security.keystore.KeyGenParameterSpec
@@ -5,6 +20,8 @@ import android.security.keystore.KeyProperties
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import stanissay.wear.pass.utils.DataConstants
+import stanissay.wear.pass.utils.PinResult
+import stanissay.wear.pass.utils.PinVault
 import stanissay.wear.pass.utils.keyStore
 import stanissay.wear.pass.utils.toChars
 import stanissay.wear.pass.utils.toUtf8
@@ -20,7 +37,8 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-class KeystorePinVault(private val blobFile: File, private val metaFile: File, private val alias: String) : PinVault {
+class KeystorePinVault(private val blobFile: File, private val metaFile: File, private val alias: String) :
+    PinVault {
     override suspend fun setup(pin: CharArray, password: CharArray) = withContext(Dispatchers.Default) { doSetup(pin, password) }
     override suspend fun unlock(pin: CharArray): PinResult = withContext(Dispatchers.Default) { doUnlock(pin) }
     override fun wipe() {
