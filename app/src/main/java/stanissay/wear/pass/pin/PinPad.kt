@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.KeyButton
 import stanissay.wear.pass.utils.MainCheckBox
+import stanissay.wear.pass.utils.MainDivider
 import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
 import stanissay.wear.pass.utils.SubTitle
@@ -54,6 +55,8 @@ fun PinPad(
                 MainCheckBox(check = i < digits.length)
             }
         }
+
+        MainDivider()
 
         Column(verticalArrangement = Arrangement.spacedBy(UiConstants.SPACE)) {
             listOf("123", "456", "789").forEach { row ->

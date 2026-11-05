@@ -26,7 +26,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
@@ -71,6 +70,7 @@ fun SafeDial(
     var pendingLast by remember(logic) { mutableStateOf(false) }
     val dwell = remember(logic) { Animatable(0f) }
     val primary = MaterialTheme.colorScheme.primary
+    val secondary = MaterialTheme.colorScheme.secondary
     val textStyle = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onBackground)
     val measurer = rememberTextMeasurer()
     val normal = remember(measurer) {
@@ -210,8 +210,10 @@ fun SafeDial(
                 return Offset(c.x + (radius * sin(a)).toFloat(), c.y - (radius * cos(a)).toFloat())
             }
 
+            drawCircle(secondary, radius = ringR - chipR - UiConstants.SPACE.toPx(), style = Stroke(width = UiConstants.THICKNESS.toPx()))
+
             if (cursor == null) {
-                drawCircle(primary, radius = UiConstants.SPACE.toPx(), center = pos(-18f, ringR))
+                drawCircle(primary, radius = UiConstants.BASE_SIZE_XXS.toPx() / 2, center = pos(-18f, ringR))
             }
             for (d in 0..9) {
                 val p = pos(d * 36f, ringR)
@@ -239,8 +241,8 @@ fun SafeDial(
 
         ClickableBox(
             modifier = Modifier.size(diameter * DataConstants.CENTER_FRACTION)
-                .align(Alignment.Center)
-                .clip(CircleShape),
+                .align(Alignment.Center),
+            shape = CircleShape,
             onClick = { onTap() },
             onLongClick = { onClearAll() }
         ) {
