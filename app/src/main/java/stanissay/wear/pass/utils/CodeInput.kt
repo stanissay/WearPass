@@ -1,9 +1,14 @@
 package stanissay.wear.pass.utils
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import stanissay.wear.pass.R
 import stanissay.wear.pass.pin.PinPad
@@ -21,14 +26,11 @@ fun CodeInput(
     resetKey: Any,
     onComplete: (CharArray) -> Unit,
 ) {
-    if (method == UnlockMethod.Safe) {
-        SafeDial(title, subtitle, enabled, resetKey, onComplete)
-    } else {
-        PinPad(
-            title = title, subtitle = subtitle, enabled = enabled,
-            resetKey = resetKey, onComplete = onComplete,
-        )
+    Box(Modifier.fillMaxSize().blur(if (!enabled) UiConstants.BASE_SIZE_XXS else 0.dp)) {
+        if (method == UnlockMethod.Safe) SafeDial(title, subtitle, enabled, resetKey, onComplete)
+        else PinPad(title, subtitle, enabled, resetKey, onComplete)
     }
+    if (!enabled) CircularBar()
 }
 
 @Composable

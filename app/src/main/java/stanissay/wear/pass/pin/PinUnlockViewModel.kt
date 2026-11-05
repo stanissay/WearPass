@@ -36,7 +36,6 @@ class PinUnlockViewModel(application: Application) : AndroidViewModel(applicatio
                             opened.fold(
                                 onSuccess = { o ->
                                     session.open(o.db, sync = o.sync)
-                                    _state.update { it.copy(busy = false) }
                                     withContext(Dispatchers.Main) { onUnlocked() }
                                 },
                                 onFailure = { e ->

@@ -26,7 +26,6 @@ class MasterViewModel(application: Application) : AndroidViewModel(application) 
             runCatching { vault.openSyncing(password) }.fold(
                 onSuccess = { r ->
                     session.open(r.db, password.toCharArray(), r.sync)
-                    _state.value = UnlockState.Idle
                     withContext(Dispatchers.Main) { onOpened() }
                 },
                 onFailure = { e ->
