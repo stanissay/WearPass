@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -18,7 +17,6 @@ import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.KeyButton
 import stanissay.wear.pass.utils.MainCheckBox
 import stanissay.wear.pass.utils.MainDivider
-import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
 import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.UiConstants
@@ -47,10 +45,7 @@ fun PinPad(
         PageTitle(title)
         subtitle?.let { SubTitle(it) }
 
-        Row(
-            modifier = Modifier.padding(PaddingStyle.verticalXs),
-            horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)) {
             repeat(DataConstants.PIN_LENGTH) { i ->
                 MainCheckBox(check = i < digits.length)
             }

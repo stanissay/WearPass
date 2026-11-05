@@ -30,7 +30,6 @@ import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.ClickableListItem
 import stanissay.wear.pass.utils.MainText
-import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
 import stanissay.wear.pass.utils.UiConstants
 
@@ -57,17 +56,17 @@ fun MasterPasswordScreen(onOpened: () -> Unit, viewModel: MasterViewModel = view
                 onKeyboardAction = KeyboardActionHandler {
                     viewModel.unlock(field.text.toString(), onOpened)
                 },
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
                 decorator = TextFieldDecorator { innerTextField ->
                     Box(
                         modifier = Modifier.fillMaxSize()
-                            .padding(PaddingStyle.xs),
+                            .padding(UiConstants.SPACE),
                         contentAlignment = Alignment.CenterStart,
                     ) { innerTextField() }
                 },
                 modifier = Modifier.height(UiConstants.BASE_SIZE).fillMaxWidth()
                     .background(MaterialTheme.colorScheme.secondary, MaterialTheme.shapes.large)
-                    .padding(PaddingStyle.xs)
+                    .padding(UiConstants.SPACE)
             )
         }
         item {

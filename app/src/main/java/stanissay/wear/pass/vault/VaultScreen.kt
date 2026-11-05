@@ -42,7 +42,6 @@ import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.LocalAmbient
 import stanissay.wear.pass.utils.MainDivider
 import stanissay.wear.pass.utils.MainText
-import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
 import stanissay.wear.pass.utils.Revealed
 import stanissay.wear.pass.utils.SubTitle
@@ -60,9 +59,8 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
             items(v.groups, key = { "g-${it.id}" }) { g ->
                 ClickableListItem(onClick = { onGroup(g.id) }) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(PaddingStyle.horizontalXs),
+                        modifier = Modifier.fillMaxSize()
+                            .padding(UiConstants.paddingH),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
                     ) {
@@ -75,9 +73,8 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
             items(v.entries, key = { "e-${it.id}" }) { e ->
                 ClickableListItem(onClick = { onEntry(e.id) }) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(PaddingStyle.horizontalXs),
+                        modifier = Modifier.fillMaxSize()
+                            .padding(UiConstants.paddingH),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
                     ) {
@@ -172,9 +169,10 @@ fun EntryScreen(entryId: String) {
 
 @Composable
 private fun Field(label: String, value: String) {
-    Column(Modifier
-        .fillMaxWidth()
-        .padding(PaddingStyle.horizontalXs)) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+            .padding(UiConstants.paddingH)
+    ) {
         SubTitle(label)
         MainText(value, textAlign = TextAlign.Start)
     }

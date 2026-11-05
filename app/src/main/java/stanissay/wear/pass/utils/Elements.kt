@@ -298,9 +298,10 @@ fun ColoredPassword(password: String) {
 @Composable
 fun MainDivider() {
     Box(
-        modifier = Modifier.padding(PaddingStyle.verticalXs).fillMaxWidth().height(UiConstants.THICKNESS)
+        modifier = Modifier
+            .padding(vertical = UiConstants.SPACE)
+            .fillMaxWidth().height(UiConstants.THICKNESS)
             .background(MaterialTheme.colorScheme.secondary)
-
     )
 }
 

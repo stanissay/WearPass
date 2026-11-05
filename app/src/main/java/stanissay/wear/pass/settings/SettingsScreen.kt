@@ -28,7 +28,6 @@ import stanissay.wear.pass.utils.MainCheckBox
 import stanissay.wear.pass.utils.MainColors
 import stanissay.wear.pass.utils.MainDivider
 import stanissay.wear.pass.utils.MainText
-import stanissay.wear.pass.utils.PaddingStyle
 import stanissay.wear.pass.utils.PageTitle
 import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.UiConstants
@@ -132,7 +131,7 @@ private fun Choice(
 ) {
     Row(
         modifier = Modifier.fillMaxSize()
-            .padding(PaddingStyle.horizontalXs),
+            .padding(UiConstants.paddingH),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)
     ) {

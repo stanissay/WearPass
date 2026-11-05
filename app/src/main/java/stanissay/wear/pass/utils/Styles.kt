@@ -75,12 +75,8 @@ object UiConstants {
     val BUTTON_SIZE_S = 16.dp
     val BUTTON_SIZE = 32.dp
 
-    val SPACE = 2.dp
+    val SPACE = 4.dp
     val THICKNESS = 1.dp
-}
 
-object PaddingStyle {
-    val xs = PaddingValues(2.dp)
-    val horizontalXs = PaddingValues(horizontal = 2.dp)
-    val verticalXs = PaddingValues(vertical = 2.dp)
+    val paddingH = PaddingValues(horizontal = SPACE)
 }
