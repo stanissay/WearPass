@@ -24,6 +24,7 @@ import stanissay.wear.pass.pin.KeystorePinVault
 import stanissay.wear.pass.utils.PinVault
 import stanissay.wear.pass.utils.UnlockMethod
 import stanissay.wear.pass.lock.SystemLockVault
+import stanissay.wear.pass.settings.AppSettings
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.RotaryBus
 import stanissay.wear.pass.utils.SwipeGate
@@ -36,9 +37,10 @@ class App : Application() {
     val bodyLock by lazy { BodyLock(this) { session.lock() } }
     val autoLock by lazy { AutoLock { session.lock() } }
     val vault by lazy { VaultRepository(this) }
+    val settings by lazy { AppSettings(this) }
     val session = VaultSession()
-    val pinVault: PinVault by lazy { KeystorePinVault(vault.pinBlobFile, vault.pinMetaFile, DataConstants.PIN_ALIAS) }
-    val safeVault: PinVault by lazy { KeystorePinVault(vault.safeBlobFile, vault.safeMetaFile, DataConstants.SAFE_ALIAS) }
+    val pinVault: PinVault by lazy { KeystorePinVault(vault.pinBlobFile, vault.pinMetaFile, DataConstants.PIN_ALIAS, DataConstants.PIN_LENGTH) }
+    val safeVault: PinVault by lazy { KeystorePinVault(vault.safeBlobFile, vault.safeMetaFile, DataConstants.SAFE_ALIAS, DataConstants.SAFE_LENGTH) }
     val systemVault by lazy { SystemLockVault(vault.systemBlobFile) }
     val builtInIcons by lazy { BuiltInIcons(this) }
     val swipeGate = SwipeGate()
@@ -62,6 +64,9 @@ class App : Application() {
         if (method != UnlockMethod.SystemLock) systemVault.wipe()
         vault.refresh()
     }
+
+    fun setupLength(method: UnlockMethod) = if (method == UnlockMethod.Safe) settings.safeLength else DataConstants.PIN_LENGTH
+    fun activeLength(method: UnlockMethod) = codeVault(method).codeLength() ?: setupLength(method)
 
     fun wipeUnlockSecrets() { pinVault.wipe(); safeVault.wipe(); systemVault.wipe() }
 

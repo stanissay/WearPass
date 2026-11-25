@@ -7,6 +7,7 @@
     <string name="import_new_file">Import</string>
     <string name="incorrect_file">Incorrect file</string>
     <string name="open">Open</string>
+    <string name="apply">Apply</string>
 
     <string name="master_password">Master password</string>
     <string name="system_lock">System lock</string>
@@ -20,8 +21,11 @@
     <string name="pin_type">PIN type</string>
     <string name="classic_pin">Classic PIN</string>
     <string name="safe">Safe</string>
+    <string name="safe_test">Safe test</string>
     <string name="create_safe">Create safe</string>
     <string name="confirm_safe">Confirm safe</string>
+    <string name="safe_length">Safe length</string>
+    <string name="bezel_sensitivity">Bezel sensitivity</string>
     <string name="lock_now">Lock now</string>
     <string name="attempts">Incorrect PIN. Attempts:</string>
     <string name="session_expired">Session expired</string>

@@ -37,8 +37,7 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-class KeystorePinVault(private val blobFile: File, private val metaFile: File, private val alias: String) :
-    PinVault {
+class KeystorePinVault(private val blobFile: File, private val metaFile: File, private val alias: String, private val fallbackLength: Int) : PinVault {
     override suspend fun setup(pin: CharArray, password: CharArray) = withContext(Dispatchers.Default) { doSetup(pin, password) }
     override suspend fun unlock(pin: CharArray): PinResult = withContext(Dispatchers.Default) { doUnlock(pin) }
     override fun wipe() {
@@ -46,6 +45,8 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File, p
         metaFile.delete()
         runCatching { keyStore().deleteEntry(alias) }
     }
+    override fun codeLength(): Int? =
+        if (blobFile.exists()) (readMeta()?.second ?: fallbackLength) else null
 
     private fun doSetup(pin: CharArray, password: CharArray) {
         val salt = ByteArray(DataConstants.SALT_LEN).also { SecureRandom().nextBytes(it) }
@@ -54,7 +55,7 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File, p
             val inner = encrypt(derive(pin, salt), plain)
             val outer = encrypt(createKeystoreKey(), inner)
             writeAtomic(blobFile, byteArrayOf(DataConstants.VERSION) + salt + outer)
-            writeAttempts(0)
+            writeMeta(0, pin.size)
         } finally {
             plain.fill(0)
         }
@@ -63,9 +64,11 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File, p
     private fun doUnlock(pin: CharArray): PinResult {
         if (!blobFile.exists()) return PinResult.TooMany
 
-        val used = (readAttempts() ?: run { wipe(); return PinResult.TooMany }) + 1
+        val meta = readMeta() ?: run { wipe(); return PinResult.TooMany }
+        val length = meta.second
+        val used = meta.first + 1
         if (used > DataConstants.MAX_ATTEMPTS) { wipe(); return PinResult.TooMany }
-        writeAttempts(used)
+        writeMeta(used, length)
 
         val blob = blobFile.readBytes()
         val inner = try {
@@ -90,7 +93,7 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File, p
             inner.fill(0)
         }
 
-        writeAttempts(0)
+        writeMeta(0, length)
         val chars = plain.toChars()
         plain.fill(0)
         return PinResult.Success(chars)
@@ -135,7 +138,10 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File, p
 
     private fun loadKeystoreKey(): SecretKey? = keyStore().getKey(alias, null) as? SecretKey
 
-    private fun readAttempts(): Int? = metaFile.takeIf { it.exists() }?.readText()?.trim()?.toIntOrNull()
-
-    private fun writeAttempts(n: Int) = writeAtomic(metaFile, n.toString().toByteArray())
+    private fun readMeta(): Pair<Int, Int>? {
+        val parts = metaFile.takeIf { it.exists() }?.readText()?.trim()?.split(';') ?: return null
+        val attempts = parts.getOrNull(0)?.toIntOrNull() ?: return null
+        return attempts to (parts.getOrNull(1)?.toIntOrNull() ?: fallbackLength)
+    }
+    private fun writeMeta(attempts: Int, length: Int) = writeAtomic(metaFile, "$attempts;$length".toByteArray())
 }

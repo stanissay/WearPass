@@ -22,9 +22,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.CircularBar
 import stanissay.wear.pass.utils.UiConstants
@@ -36,11 +38,12 @@ fun CodeInput(
     title: String,
     subtitle: String?,
     enabled: Boolean,
+    length: Int,
     resetKey: Any,
     onComplete: (CharArray) -> Unit,
 ) {
     Box(Modifier.fillMaxSize().blur(if (!enabled) UiConstants.BASE_SIZE_XXS else 0.dp)) {
-        if (method == UnlockMethod.Safe) SafeDial(title, subtitle, enabled, resetKey, onComplete)
+        if (method == UnlockMethod.Safe) SafeDial(title, subtitle, enabled, length, resetKey, onComplete)
         else PinPad(title, subtitle, enabled, resetKey, onComplete)
     }
     if (!enabled) CircularBar()
@@ -52,6 +55,7 @@ fun CodeSetupScreen(
     onDone: () -> Unit,
     viewModel: PinSetupViewModel = viewModel()
 ) {
+    val app = LocalContext.current.applicationContext as App
     val state by viewModel.state.collectAsState()
     CodeInput(
         method = method,
@@ -59,6 +63,7 @@ fun CodeSetupScreen(
         else if (!state.confirming) stringResource(R.string.create_pin) else stringResource(R.string.confirm_pin),
         subtitle = state.error,
         enabled = !state.saving,
+        length = app.setupLength(method),
         resetKey = state.resetKey,
         onComplete = { viewModel.onPin(method, it, onDone) }
     )
@@ -71,12 +76,14 @@ fun CodeUnlockScreen(
     onForcedMaster: () -> Unit,
     viewModel: PinUnlockViewModel = viewModel(),
 ) {
+    val app = LocalContext.current.applicationContext as App
     val state by viewModel.state.collectAsState()
     CodeInput(
         method = method,
         title = if (method == UnlockMethod.Safe) stringResource(R.string.safe) else stringResource(R.string.pin),
         subtitle = state.error,
         enabled = !state.busy,
+        length = app.activeLength(method),
         resetKey = state.resetKey,
         onComplete = { viewModel.onPin(method, it, onUnlocked, onForcedMaster) }
     )

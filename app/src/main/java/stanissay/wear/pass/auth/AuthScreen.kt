@@ -18,9 +18,11 @@ package stanissay.wear.pass.auth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
+import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 import stanissay.wear.pass.pin.PinPad
 import stanissay.wear.pass.pin.SafeDial
@@ -33,7 +35,9 @@ fun AuthScreen(
     onForcedMaster: () -> Unit,
     viewModel: AuthViewModel = viewModel(),
 ) {
+    val app = LocalContext.current.applicationContext as App
     val state by viewModel.state.collectAsState()
+
     when (viewModel.method) {
         UnlockMethod.Pin -> PinPad(
             title = stringResource(R.string.confirm_pin),
@@ -57,6 +61,7 @@ fun AuthScreen(
             title = stringResource(R.string.confirm_safe),
             subtitle = state.message,
             enabled = !state.busy,
+            length = app.activeLength(viewModel.method),
             resetKey = state.resetKey,
             onComplete = { viewModel.confirmPin(it, onConfirmed, onForcedMaster) }
         )

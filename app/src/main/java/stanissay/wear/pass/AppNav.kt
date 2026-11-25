@@ -48,6 +48,7 @@ import stanissay.wear.pass.lock.SystemUnlockScreen
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.pin.CodeSetupScreen
 import stanissay.wear.pass.pin.CodeUnlockScreen
+import stanissay.wear.pass.pin.SafeTestScreen
 import stanissay.wear.pass.utils.AuthKey
 import stanissay.wear.pass.utils.EntryKey
 import stanissay.wear.pass.utils.FileBrowserKey
@@ -56,6 +57,7 @@ import stanissay.wear.pass.utils.MasterPasswordKey
 import stanissay.wear.pass.utils.PinSetupKey
 import stanissay.wear.pass.utils.PinUnlockKey
 import stanissay.wear.pass.utils.SafeSetupKey
+import stanissay.wear.pass.utils.SafeTestKey
 import stanissay.wear.pass.utils.SafeUnlockKey
 import stanissay.wear.pass.utils.SettingsKey
 import stanissay.wear.pass.utils.SystemSetupKey
@@ -144,6 +146,7 @@ fun AppNav(vault: VaultRepository) {
                         onWiped = { backStack.clear(); backStack.add(FileBrowserKey) },
                         onLockNow = { session.lock(); relock() },
                         onSwitchTo = { target -> backStack.add(AuthKey(target)) },
+                        onTestDial = { backStack.add(SafeTestKey) }
                     )
                 }
                 entry<AuthKey> { key ->
@@ -182,6 +185,7 @@ fun AppNav(vault: VaultRepository) {
                         onForcedMaster = { backStack.clear(); backStack.add(MasterPasswordKey) },
                     )
                 }
+                entry<SafeTestKey> { SafeTestScreen() }
             }
         )
         if(showTimeText) TimeText()

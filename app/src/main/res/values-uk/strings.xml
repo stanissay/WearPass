@@ -6,6 +6,7 @@
     <string name="import_new_file">Імпортувати</string>
     <string name="incorrect_file">Некоректний файл</string>
     <string name="error">Помилка</string>
+    <string name="apply">Підтвердити</string>
 
     <string name="master_password">Майстер-пароль</string>
     <string name="open">Відкрити</string>
@@ -20,8 +21,11 @@
     <string name="pin_type">Тип PIN</string>
     <string name="classic_pin">Класичний PIN</string>
     <string name="safe">Сейф</string>
+    <string name="safe_test">Тест сейфа</string>
     <string name="create_safe">Створіть сейф</string>
     <string name="confirm_safe">Підтвердіть сейф</string>
+    <string name="safe_length">Довжина сейфа</string>
+    <string name="bezel_sensitivity">Чутливість безеля</string>
     <string name="lock_now">Заблокувати зараз</string>
     <string name="attempts">Невірний PIN. Спроб:</string>
     <string name="session_expired">Сесію завершено</string>

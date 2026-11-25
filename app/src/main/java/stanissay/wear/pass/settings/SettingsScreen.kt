@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,11 +40,13 @@ import stanissay.wear.pass.App
 import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.ClickableListItem
+import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.MainCheckBox
 import stanissay.wear.pass.utils.MainColors
 import stanissay.wear.pass.utils.MainDivider
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PageTitle
+import stanissay.wear.pass.utils.StepperRow
 import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.UiConstants
 import stanissay.wear.pass.utils.UnlockMethod
@@ -56,12 +59,17 @@ fun SettingsScreen(
     onWiped: () -> Unit,
     onLockNow: () -> Unit,
     onSwitchTo: (UnlockMethod) -> Unit,
+    onTestDial: () -> Unit
 ) {
     val context = LocalContext.current
     val app = context.applicationContext as App
+    val settings = app.settings
     val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "0.0"
     val unlocked by app.session.unlocked.collectAsState()
     val status by app.vault.status.collectAsState()
+    var level by remember { mutableIntStateOf(settings.bezelLevel) }
+    var safeLen by remember { mutableIntStateOf(settings.safeLength) }
+    val activeSafeLen = remember { app.safeVault.codeLength() }
     val method = remember { app.vault.unlockMethod }
     val systemAvailable = remember { context.getSystemService(KeyguardManager::class.java).isDeviceSecure }
     var confirmWipe by remember { mutableStateOf(false) }
@@ -101,6 +109,30 @@ fun SettingsScreen(
                 item {
                     Choice(method == UnlockMethod.Safe, stringResource(R.string.safe)) {
                         if (method != UnlockMethod.Safe) onSwitchTo(UnlockMethod.Safe)
+                    }
+                }
+                item { ClickableListItem(onClick = onTestDial) { MainText(stringResource(R.string.safe_test)) } }
+                if(method == UnlockMethod.Safe) {
+                    item {
+                        StepperRow(
+                            label = stringResource(R.string.bezel_sensitivity),
+                            value = level,
+                            min = DataConstants.BEZEL_MIN,
+                            max = DataConstants.BEZEL_MAX,
+                            onChange = { level = it; settings.bezelLevel = it },
+                        )
+                    }
+                    item {
+                        StepperRow(
+                            label = stringResource(R.string.safe_length),
+                            value = safeLen,
+                            min = DataConstants.SAFE_MIN,
+                            max = DataConstants.SAFE_MAX,
+                            onChange = { safeLen = it; settings.safeLength = it },
+                        )
+                    }
+                    if (activeSafeLen != null && safeLen != activeSafeLen) {
+                        item { ClickableListItem(onClick = { onSwitchTo(UnlockMethod.Safe) }) { MainText(stringResource(R.string.apply)) } }
                     }
                 }
             }

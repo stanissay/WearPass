@@ -50,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap
 @Serializable data object SafeUnlockKey : NavKey
 @Serializable data object SystemSetupKey : NavKey
 @Serializable data object SystemUnlockKey : NavKey
+@Serializable data object SafeTestKey : NavKey
 fun NavKey.requiresUnlock() = this is GroupKey || this is EntryKey || this is AuthKey || this is PinSetupKey || this is SafeSetupKey || this is SystemSetupKey
 
     // Auth
@@ -84,6 +85,7 @@ interface PinVault {
     suspend fun setup(pin: CharArray, password: CharArray)
     suspend fun unlock(pin: CharArray): PinResult
     fun wipe()
+    fun codeLength(): Int?
 }
 sealed interface PinResult {
     class Success(val password: CharArray) : PinResult

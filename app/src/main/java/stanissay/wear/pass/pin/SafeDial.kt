@@ -49,10 +49,12 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.wear.compose.material3.MaterialTheme
 import stanissay.wear.pass.App
+import stanissay.wear.pass.R
 import stanissay.wear.pass.utils.ClickableBox
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.DialHaptics
@@ -71,6 +73,7 @@ fun SafeDial(
     title: String,
     subtitle: String? = null,
     enabled: Boolean = true,
+    length: Int,
     resetKey: Any = Unit,
     onComplete: (CharArray) -> Unit,
 ) {
@@ -80,7 +83,7 @@ fun SafeDial(
     val haptics = remember(view) { DialHaptics(view) }
     val currentEnabled by rememberUpdatedState(enabled)
     val currentOnComplete by rememberUpdatedState(onComplete)
-    val logic = remember(resetKey, DataConstants.SAFE_LENGTH) { SafeLogic(DataConstants.SAFE_LENGTH) }
+    val logic = remember(resetKey, length) { SafeLogic(length) }
     var cursor by remember(logic) { mutableStateOf<Int?>(null) }
     var count by remember(logic) { mutableIntStateOf(0) }
     val rotary = remember(logic) { FloatArray(1) }
@@ -115,9 +118,9 @@ fun SafeDial(
     val onClearAll: () -> Unit = remember(logic, haptics) {
         { if (currentEnabled) { logic.clear(); haptics.clear(); cursor = null; count = 0; pendingLast = false } }
     }
-    val onTap: () -> Unit = remember(logic, haptics, DataConstants.SAFE_LENGTH) {
+    val onTap: () -> Unit = remember(logic, haptics, length) {
         {
-            val allowed = logic.count == DataConstants.SAFE_LENGTH - 1
+            val allowed = logic.count == length - 1
             if (currentEnabled && allowed) {
                 val r = logic.commitCurrent()
                 if (r != SafeResult.Ignored) {
@@ -144,10 +147,11 @@ fun SafeDial(
     }
     val handleRotary: (Float) -> Boolean = remember(logic) {
         { px ->
+            val step = app.settings.pxPerStep()
             if (px != 0f && rotary[0] != 0f && (px > 0f) != (rotary[0] > 0f)) rotary[0] = 0f
             rotary[0] += px
-            while (rotary[0] >= DataConstants.PX_PER_STEP) { rotary[0] -= DataConstants.PX_PER_STEP; onStep(+1) }
-            while (rotary[0] <= -DataConstants.PX_PER_STEP) { rotary[0] += DataConstants.PX_PER_STEP; onStep(-1) }
+            while (rotary[0] >= step) { rotary[0] -= step; onStep(+1) }
+            while (rotary[0] <= -step) { rotary[0] += step; onStep(-1) }
             true
         }
     }
@@ -269,11 +273,23 @@ fun SafeDial(
             ) {
                 MainText(subtitle ?: title)
                 Row(horizontalArrangement = Arrangement.spacedBy(UiConstants.SPACE)) {
-                    repeat(DataConstants.SAFE_LENGTH) { i ->
+                    repeat(length) { i ->
                         MainCheckBox(check = i < count)
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+fun SafeTestScreen() {
+    val app = LocalContext.current.applicationContext as App
+    var reset by remember { mutableIntStateOf(0) }
+    SafeDial(
+        title = stringResource(R.string.safe_test),
+        length = app.settings.safeLength,
+        resetKey = reset,
+        onComplete = { code -> code.fill('0'); reset++ },
+    )
 }
