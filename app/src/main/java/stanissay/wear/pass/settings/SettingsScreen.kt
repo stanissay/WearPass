@@ -112,28 +112,26 @@ fun SettingsScreen(
                     }
                 }
                 item { ClickableListItem(onClick = onTestDial) { MainText(stringResource(R.string.safe_test)) } }
-                if(method == UnlockMethod.Safe) {
-                    item {
-                        StepperRow(
-                            label = stringResource(R.string.bezel_sensitivity),
-                            value = level,
-                            min = DataConstants.BEZEL_MIN,
-                            max = DataConstants.BEZEL_MAX,
-                            onChange = { level = it; settings.bezelLevel = it },
-                        )
-                    }
-                    item {
-                        StepperRow(
-                            label = stringResource(R.string.safe_length),
-                            value = safeLen,
-                            min = DataConstants.SAFE_MIN,
-                            max = DataConstants.SAFE_MAX,
-                            onChange = { safeLen = it; settings.safeLength = it },
-                        )
-                    }
-                    if (activeSafeLen != null && safeLen != activeSafeLen) {
-                        item { ClickableListItem(onClick = { onSwitchTo(UnlockMethod.Safe) }) { MainText(stringResource(R.string.apply)) } }
-                    }
+                item {
+                    StepperRow(
+                        label = stringResource(R.string.bezel_sensitivity),
+                        value = level,
+                        min = DataConstants.BEZEL_MIN,
+                        max = DataConstants.BEZEL_MAX,
+                        onChange = { level = it; settings.bezelLevel = it },
+                    )
+                }
+                item {
+                    StepperRow(
+                        label = stringResource(R.string.safe_length),
+                        value = safeLen,
+                        min = DataConstants.SAFE_MIN,
+                        max = DataConstants.SAFE_MAX,
+                        onChange = { safeLen = it; settings.safeLength = it },
+                    )
+                }
+                if (activeSafeLen != null && safeLen != activeSafeLen && method == UnlockMethod.Safe) {
+                    item { ClickableListItem(onClick = { onSwitchTo(UnlockMethod.Safe) }) { MainText(stringResource(R.string.apply)) } }
                 }
             }
         } else if (status != VaultStatus.NotImported)

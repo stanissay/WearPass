@@ -9,7 +9,7 @@ class AppSettings(context: Context) {
     private val prefs = context.getSharedPreferences(DataConstants.SETTINGS_PREFS, Context.MODE_PRIVATE)
 
     var safeLength: Int
-        get() = prefs.getInt(DataConstants.KEY_SAFE_LENGTH, DataConstants.SAFE_LENGTH).coerceIn(DataConstants.SAFE_MIN, DataConstants.SAFE_MAX)
+        get() = prefs.getInt(DataConstants.KEY_SAFE_LENGTH, DataConstants.SAFE_MIN).coerceIn(DataConstants.SAFE_MIN, DataConstants.SAFE_MAX)
         set(v) { prefs.edit { putInt(DataConstants.KEY_SAFE_LENGTH, v.coerceIn(DataConstants.SAFE_MIN, DataConstants.SAFE_MAX)) } }
 
     var bezelLevel: Int

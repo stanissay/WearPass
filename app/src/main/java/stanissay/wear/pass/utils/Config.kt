@@ -29,12 +29,11 @@ object DataConstants {
     const val BROWSER_ROOT = "/"
     const val BROWSER_UP = ".."
     const val PIN_LENGTH = 4
-    const val SAFE_LENGTH = 4
     const val SAFE_MIN = 4
     const val SAFE_MAX = 8
+    const val BEZEL_DEFAULT = 5
     const val BEZEL_MIN = 1
     const val BEZEL_MAX = 9
-    const val BEZEL_DEFAULT = 5
     const val ANDROID_KEY_STORE = "AndroidKeyStore"
     const val PIN_ALIAS = "wearkeepass_pin_wrap"
     const val SAFE_ALIAS = "wearkeepass_safe_wrap"

@@ -56,12 +56,14 @@ import stanissay.wear.pass.utils.ColoredPassword
 import stanissay.wear.pass.utils.DataConstants
 import stanissay.wear.pass.utils.IconRef
 import stanissay.wear.pass.utils.LocalAmbient
+import stanissay.wear.pass.utils.MainColors
 import stanissay.wear.pass.utils.MainDivider
 import stanissay.wear.pass.utils.MainText
 import stanissay.wear.pass.utils.PageTitle
 import stanissay.wear.pass.utils.Revealed
 import stanissay.wear.pass.utils.SubTitle
 import stanissay.wear.pass.utils.UiConstants
+import stanissay.wear.pass.utils.resolveEntryColors
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -87,7 +89,11 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
                 }
             }
             items(v.entries, key = { "e-${it.id}" }) { e ->
-                ClickableListItem(onClick = { onEntry(e.id) }) {
+                val rc = e.colors?.let { c -> resolveEntryColors(c, MainColors.TRANSPARENT, MaterialTheme.colorScheme.primary) }
+                ClickableListItem(
+                    containerColor = rc?.container,
+                    onClick = { onEntry(e.id) }
+                ) {
                     Row(
                         modifier = Modifier.fillMaxSize()
                             .padding(UiConstants.paddingH),
@@ -99,12 +105,13 @@ fun GroupScreen(groupId: String?, onGroup: (String) -> Unit, onEntry: (String) -
                             horizontalAlignment = Alignment.Start,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            SubTitle(e.title.ifEmpty { stringResource(R.string.unnamed) })
+                            SubTitle(e.title.ifEmpty { stringResource(R.string.unnamed) },
+                                color = rc?.content)
                             if (e.userName.isNotEmpty()) MainText(
                                 text = e.userName,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                color = MaterialTheme.colorScheme.secondary
+                                color = rc?.content?: MaterialTheme.colorScheme.secondary
                             )
                         }
                     }
@@ -121,6 +128,7 @@ fun EntryScreen(entryId: String) {
     val session = (LocalContext.current.applicationContext as App).session
     val entry = remember(entryId) { session.index?.entry(entryId) }
     var revealed by remember(entryId) { mutableStateOf<Revealed?>(null) }
+    val rc = entry?.colors?.let { c -> resolveEntryColors(c, MainColors.TRANSPARENT, MaterialTheme.colorScheme.primary) }
 
     LaunchedEffect(ambient) { if (ambient) revealed = null }
 
@@ -138,7 +146,12 @@ fun EntryScreen(entryId: String) {
     ScalingLazyColumn(modifier = Modifier.fillMaxSize()) {
         entry?.let { e ->
             item { EntryIcon(e.icon, e.title) }
-            item { ListHeader { PageTitle(e.title) } }
+            item {
+                ListHeader(
+                    backgroundColor = rc?.container ?: MainColors.TRANSPARENT,
+                    modifier = Modifier.clip(CircleShape)
+                ) { PageTitle(e.title, color = rc?.content) }
+            }
             if (e.userName.isNotEmpty()) item { Field(stringResource(R.string.login), e.userName) }
             if (e.hasPassword) {
                 item {

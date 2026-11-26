@@ -180,11 +180,13 @@ fun ClickableBox(
 @Composable
 fun ClickableListItem(
     modifier: Modifier = Modifier,
+    containerColor: Color? = null,
     onClick: () -> Unit = {},
     content: @Composable BoxScope.() -> Unit
 ) {
     ClickableBox(
         modifier = modifier.fillMaxWidth().height(UiConstants.BASE_SIZE),
+        background = containerColor?: MainColors.TRANSPARENT,
         borderColor = MaterialTheme.colorScheme.secondary,
         onClick = onClick
     ) { content() }
@@ -275,14 +277,15 @@ fun MainText(
 @Composable
 fun PageTitle(
     text: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color? = null
 ) {
     MainText(
         text = text,
         modifier = modifier,
         style = MaterialTheme.typography.displayMedium,
         textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.primary,
+        color = color?: MaterialTheme.colorScheme.primary,
         maxLines = 2
     )
 }
@@ -291,13 +294,14 @@ fun PageTitle(
 fun SubTitle(
     text: String,
     modifier: Modifier = Modifier,
-    textAlign: TextAlign = TextAlign.Center
+    textAlign: TextAlign = TextAlign.Center,
+    color: Color? = null
 ) {
     MainText(
         text = text,
         modifier = modifier,
         style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary,
+        color = color ?: MaterialTheme.colorScheme.primary,
         textAlign = textAlign,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis

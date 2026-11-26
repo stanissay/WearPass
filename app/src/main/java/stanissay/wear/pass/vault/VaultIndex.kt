@@ -31,6 +31,7 @@ import stanissay.wear.pass.utils.EntryView
 import stanissay.wear.pass.utils.GroupItem
 import stanissay.wear.pass.utils.GroupView
 import stanissay.wear.pass.utils.IconRef
+import stanissay.wear.pass.utils.colors
 
 class VaultIndex(db: KeePassDatabase) {
     private val groups = HashMap<String, Group>()
@@ -70,10 +71,11 @@ class VaultIndex(db: KeePassDatabase) {
                         it.uuid.toString(),
                         it.text(DataConstants.TITLE),
                         it.text(DataConstants.USER),
-                        it.iconRef()
+                        it.iconRef(),
+                        it.colors()
                     )
                 }.sortedBy { it.title.lowercase() },
-            icon = g.iconRef()
+            icon = g.iconRef(),
         )
     }
 
@@ -88,6 +90,7 @@ class VaultIndex(db: KeePassDatabase) {
             icon = it.iconRef(),
             customFields = it.customFields(),
             attachments = it.binaries.map { b -> b.name }.filter { n -> n.isNotBlank() },
+            colors = it.colors()
         )
     }
 

@@ -21,13 +21,17 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.view.HapticFeedbackConstants
 import android.view.View
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.luminance
 import androidx.navigation3.runtime.NavKey
 import app.keemobile.kotpass.database.KeePassDatabase
+import app.keemobile.kotpass.models.Entry
 import kotlinx.serialization.Serializable
 import java.io.File
 import java.nio.ByteBuffer
@@ -127,12 +131,12 @@ data class GroupItem(
 )
 data class EntryItem(
     val id: String, val title: String,
-    val userName: String, val icon: IconRef
+    val userName: String, val icon: IconRef, val colors: EntryColors? = null
 )
 data class EntryView(
     val id: String, val title: String, val userName: String,
     val hasPassword: Boolean, val url: String, val notes: String,
-    val icon: IconRef, val customFields: List<CustomField>, val attachments: List<String>
+    val icon: IconRef, val customFields: List<CustomField>, val attachments: List<String>, val colors: EntryColors? = null,
 )
 data class GroupView(
     val id: String, val name: String,
@@ -140,6 +144,7 @@ data class GroupView(
     val icon: IconRef
 )
 data class CustomField(val name: String, val value: String?, val isProtected: Boolean)
+data class EntryColors(val container: Int?, val content: Int?)
 enum class SyncNote { None, Updated, SourceMissing, SourceUnreadable }
 class OpenResult(val db: KeePassDatabase, val sync: SyncNote)
 class Synced(val note: SyncNote, val db: KeePassDatabase?)
@@ -179,6 +184,9 @@ class DialHaptics(private val view: View) {
     private fun perform(constant: Int) { view.performHapticFeedback(constant) }
 }
 
+@Immutable
+class ResolvedColors(val container: Color, val content: Color)
+
 fun CharArray.toUtf8(): ByteArray {
     val bb = Charsets.UTF_8.encode(CharBuffer.wrap(this))
     val out = ByteArray(bb.remaining()).also { bb.get(it) }
@@ -189,6 +197,36 @@ fun CharArray.toUtf8(): ByteArray {
 fun ByteArray.toChars(): CharArray {
     val cb = Charsets.UTF_8.decode(ByteBuffer.wrap(this))
     return CharArray(cb.remaining()).also { cb.get(it) }
+}
+
+fun Entry.colors(): EntryColors? {
+    val bg = parseHex(backgroundColor)
+    val fg = parseHex(foregroundColor)
+    return if (bg == null && fg == null) null else EntryColors(container = bg, content = fg)
+}
+
+@SuppressLint("UseKtx")
+fun parseHex(s: String?): Int? {
+    val t = s?.trim().orEmpty()
+    if (t.isEmpty()) return null
+    return runCatching {
+        android.graphics.Color.parseColor(if (t.startsWith("#")) t else "#$t")
+    }.getOrNull()
+}
+
+fun contrast(a: Color, b: Color): Float {
+    val l1 = a.luminance()
+    val l2 = b.luminance()
+    return (maxOf(l1, l2) + 0.05f) / (minOf(l1, l2) + 0.05f)
+}
+
+fun readableOn(bg: Color): Color = if (contrast(Color.Black, bg) >= contrast(Color.White, bg)) Color.Black else Color.White
+
+fun resolveEntryColors(c: EntryColors?, defaultContainer: Color, defaultContent: Color, ): ResolvedColors {
+    val container = c?.container?.let { Color(it) } ?: defaultContainer
+    val wanted = c?.content?.let { Color(it) } ?: if (c?.container != null) readableOn(container) else defaultContent
+    val content = if (contrast(wanted, container) >= 3f) wanted else readableOn(container)
+    return ResolvedColors(container, content)
 }
 
 fun writeAtomic(target: File, bytes: ByteArray) {

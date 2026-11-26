@@ -37,7 +37,7 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-class KeystorePinVault(private val blobFile: File, private val metaFile: File, private val alias: String, private val fallbackLength: Int) : PinVault {
+class KeystorePinVault(private val blobFile: File, private val metaFile: File, private val alias: String) : PinVault {
     override suspend fun setup(pin: CharArray, password: CharArray) = withContext(Dispatchers.Default) { doSetup(pin, password) }
     override suspend fun unlock(pin: CharArray): PinResult = withContext(Dispatchers.Default) { doUnlock(pin) }
     override fun wipe() {
@@ -46,7 +46,7 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File, p
         runCatching { keyStore().deleteEntry(alias) }
     }
     override fun codeLength(): Int? =
-        if (blobFile.exists()) (readMeta()?.second ?: fallbackLength) else null
+        if (blobFile.exists()) readMeta()?.second else null
 
     private fun doSetup(pin: CharArray, password: CharArray) {
         val salt = ByteArray(DataConstants.SALT_LEN).also { SecureRandom().nextBytes(it) }
@@ -141,7 +141,8 @@ class KeystorePinVault(private val blobFile: File, private val metaFile: File, p
     private fun readMeta(): Pair<Int, Int>? {
         val parts = metaFile.takeIf { it.exists() }?.readText()?.trim()?.split(';') ?: return null
         val attempts = parts.getOrNull(0)?.toIntOrNull() ?: return null
-        return attempts to (parts.getOrNull(1)?.toIntOrNull() ?: fallbackLength)
+        val length = parts.getOrNull(1)?.toIntOrNull() ?: return null
+        return attempts to length
     }
     private fun writeMeta(attempts: Int, length: Int) = writeAtomic(metaFile, "$attempts;$length".toByteArray())
 }
